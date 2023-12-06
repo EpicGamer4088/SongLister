@@ -14,7 +14,7 @@
  * The `String` type is used to represent strings in C. It is a pointer to a char array
  * terminated with a null character ('\0').
  */
-typedef char* String;
+typedef char *String;
 
 /**
  * @brief External declaration for the variable `indexCount`.
@@ -46,6 +46,20 @@ typedef enum boolean
     TRUE   /**< Represents the boolean value `true`. */
 }
 boolean;
+
+/**
+ * @brief Defines a structure `UserData` to represent user-specific data.
+ *
+ * The `UserData` structure includes fields such as `fullListFilePath`, `fullMusicFolderFilePath`,
+ * and `indexCount`, providing a way to store the Data read in from the the UserData File
+ * This structure is aliased as `UserData` for convenience.
+ */
+typedef struct UserData
+{
+    String fullListFilePath;          /**< Full file path for storing song data list. */
+    String fullMusicFolderFilePath;   /**< Full file path for the music folder. */
+    int indexCount;                   /**< Count of song entries in the data list. */
+} UserData;
 
 /**
  * @brief Defines a structure `SongInfos` to represent information about a song.
@@ -92,7 +106,7 @@ void Main();
  * @param songFileLoaded A boolean indicating whether the song file is loaded.
  * @param songInfos A constant structure representing song information.
  */
-void MainMenu(FILE* file, boolean songFileLoaded, const TSongInfos songInfos);
+void MainMenu(FILE *file, boolean songFileLoaded, const TSongInfos songInfos);
 
 /**
  * @brief Prints the title screen for the Song Rater program.
@@ -206,17 +220,30 @@ void printSortedListByYearOfPublishingOptions(const int selectedOption);
 void printSortedListByRatingOptions(const int selectedOption);
 
 /**
- * @brief Takes user input for file name and file path.
+ * @brief Opens a file dialog for selecting a CSV file.
  *
- * The `inputFullFilePath` function prompts the user to enter a file name and file path.
- * If the user enters "1," the default file name is set to "SongList.csv" and the default
- * file path is set to "../". The function dynamically allocates memory for the file name
- * and file path, and then combines them into a full file path with a ".csv" extension.
- * The resulting string is returned.
+ * The `openCSVFileDialog` function displays a file dialog that allows the user to select
+ * a CSV file. If the user selects a file, the function returns the full path of the selected file.
+ * If no file is selected or an error occurs, the function returns NULL.
  *
- * @return A dynamically allocated string representing the full file path.
+ * @return A string containing the full path of the selected CSV file, or NULL if no file is selected.
  */
-String inputFullFilePath();
+String openCSVFileDialog();
+
+/**
+ * @brief Opens a folder dialog for selecting a folder.
+ *
+ * The `openFolderDialog` function displays a folder dialog that allows the user to select a folder.
+ * If the user selects a folder, the function returns the full path of the selected folder.
+ * If no folder is selected or an error occurs, the function returns NULL.
+ *
+ * @return A string containing the full path of the selected folder, or NULL if no folder is selected.
+ */
+String openFolderDialog();
+
+UserData writeUserDataIntoUserDataFile(UserData userData);
+
+UserData readUserDataFromUserDataFile();
 
 /**
  * @brief Reopens a file with the specified mode.
@@ -229,7 +256,7 @@ String inputFullFilePath();
  * @param mode The mode to be used for reopening the file (e.g., "r", "w", "a", etc.).
  * @return The reopened file pointer.
  */
-FILE* reopenFile(FILE* file, const String mode);
+FILE *reopenFile(FILE *file, const String mode);
 
 /**
  * @brief Selects the song data file for reading and writing.
@@ -244,7 +271,7 @@ FILE* reopenFile(FILE* file, const String mode);
  * @param songFileLoaded A pointer to a boolean indicating whether the song file is loaded.
  * @return The file pointer for the selected song data file.
  */
-FILE* selectSongDataFile(const char* mode, boolean* songFileLoaded);
+FILE *selectSongDataFile(const char *mode, boolean *songFileLoaded);
 
 /**
  * @brief Takes user input for song information and returns a TSongInfos structure.
@@ -269,7 +296,7 @@ TSongInfos inputSongInfos();
  *
  * @param file The file pointer to the song data file.
  */
-void addNewSong(FILE* file);
+void addNewSong(FILE *file);
 
 /**
  * @brief Adds a new song entry to the song data file.
@@ -282,7 +309,7 @@ void addNewSong(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void removeSong(FILE* file);
+void removeSong(FILE *file);
 
 /**
  * @brief Changes the information of a song entry in the song data file.
@@ -296,7 +323,7 @@ void removeSong(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void changeSongInformations(FILE* file);
+void changeSongInformations(FILE *file);
 
 /**
  * @brief Prints a formatted parting line for better visual separation.
@@ -336,7 +363,7 @@ void printTableRow(const TSongInfos song);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongs(FILE* file);
+void displayListedSongs(FILE *file);
 
 /**
  * @brief Displays the list of songs without any sorting.
@@ -349,7 +376,7 @@ void displayListedSongs(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsStatic(FILE* file);
+void displayListedSongsStatic(FILE *file);
 
 /**
  * @brief Displays the list of songs with sorting options.
@@ -362,7 +389,7 @@ void displayListedSongsStatic(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsSorted(FILE* file);
+void displayListedSongsSorted(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by name with sorting options.
@@ -374,7 +401,7 @@ void displayListedSongsSorted(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsSortedByName(FILE* file);
+void displayListedSongsSortedByName(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by name in ascending order (A-Z).
@@ -386,7 +413,7 @@ void displayListedSongsSortedByName(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsSortedByNameA2Z(FILE* file);
+void displayListedSongsSortedByNameA2Z(FILE *file);
 
 /**
  * @brief Displays song information for a given song name.
@@ -398,7 +425,7 @@ void displayListedSongsSortedByNameA2Z(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongInfosFromAGivenSong(FILE* file);
+void displayListedSongInfosFromAGivenSong(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by album name in ascending order.
@@ -411,7 +438,7 @@ void displayListedSongInfosFromAGivenSong(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsSortedByAlbum(FILE* file);
+void displayListedSongsSortedByAlbum(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by album name in ascending order (A-Z).
@@ -423,7 +450,7 @@ void displayListedSongsSortedByAlbum(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsSortedByAlbumA2Z(FILE* file);
+void displayListedSongsSortedByAlbumA2Z(FILE *file);
 
 /**
  * @brief Displays the list of songs with a given album name.
@@ -436,7 +463,7 @@ void displayListedSongsSortedByAlbumA2Z(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsWithAGivenAlbum(FILE* file);
+void displayListedSongsWithAGivenAlbum(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by artist name.
@@ -449,7 +476,7 @@ void displayListedSongsWithAGivenAlbum(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsSortedByArtist(FILE* file);
+void displayListedSongsSortedByArtist(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by artist name in ascending order (A-Z).
@@ -460,7 +487,7 @@ void displayListedSongsSortedByArtist(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsSortedByArtistA2Z(FILE* file);
+void displayListedSongsSortedByArtistA2Z(FILE *file);
 
 /**
  * @brief Displays the list of songs with a given artist.
@@ -471,7 +498,7 @@ void displayListedSongsSortedByArtistA2Z(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsWithAGivenArtist(FILE* file);
+void displayListedSongsWithAGivenArtist(FILE *file);
 
 /**
  * @brief Displays the list of songs filtered by genre.
@@ -483,7 +510,7 @@ void displayListedSongsWithAGivenArtist(FILE* file);
  *
  * @param file Pointer to the file containing song information.
  */
-void displayListedSongsByGenre(FILE* file);
+void displayListedSongsByGenre(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by year of publishing.
@@ -496,7 +523,7 @@ void displayListedSongsByGenre(FILE* file);
  *
  * @param file Pointer to the file containing song information.
  */
-void displayListedSongsByYearOfPublishing(FILE* file);
+void displayListedSongsByYearOfPublishing(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by year of publishing in descending order (new to old).
@@ -508,7 +535,7 @@ void displayListedSongsByYearOfPublishing(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsByYearOfPublishingNew2Old(FILE* file);
+void displayListedSongsByYearOfPublishingNew2Old(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by year of publishing in ascending order (old to new).
@@ -520,7 +547,7 @@ void displayListedSongsByYearOfPublishingNew2Old(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsByYearOfPublishingOld2New(FILE* file);
+void displayListedSongsByYearOfPublishingOld2New(FILE *file);
 
 /**
  * @brief Displays the list of songs published in or after a given year.
@@ -533,7 +560,7 @@ void displayListedSongsByYearOfPublishingOld2New(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsNewerThanTheGivenYear(FILE* file);
+void displayListedSongsNewerThanTheGivenYear(FILE *file);
 
 /**
  * @brief Displays the list of songs published in or before a given year.
@@ -545,7 +572,7 @@ void displayListedSongsNewerThanTheGivenYear(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsOlderThanTheGivenYear(FILE* file);
+void displayListedSongsOlderThanTheGivenYear(FILE *file);
 
 /**
  * @brief Displays the list of songs with a given year of publishing.
@@ -556,7 +583,7 @@ void displayListedSongsOlderThanTheGivenYear(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsWithAGivenYearOfPublishing(FILE* file);
+void displayListedSongsWithAGivenYearOfPublishing(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted by rating.
@@ -568,7 +595,7 @@ void displayListedSongsWithAGivenYearOfPublishing(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsByRating(FILE* file);
+void displayListedSongsByRating(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted from best to worst rating.
@@ -579,7 +606,7 @@ void displayListedSongsByRating(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsByRatingBest2Worse(FILE* file);
+void displayListedSongsByRatingBest2Worse(FILE *file);
 
 /**
  * @brief Displays the list of songs sorted from worst to best rating.
@@ -590,7 +617,7 @@ void displayListedSongsByRatingBest2Worse(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsByRatingWorse2Best(FILE* file);
+void displayListedSongsByRatingWorse2Best(FILE *file);
 
 /**
  * @brief Displays the list of songs with a given rating.
@@ -601,7 +628,7 @@ void displayListedSongsByRatingWorse2Best(FILE* file);
  *
  * @param file The file pointer to the song data file.
  */
-void displayListedSongsWithAGivenRating(FILE* file);
+void displayListedSongsWithAGivenRating(FILE *file);
 
 /**
  * @brief Clears the input buffer by consuming any remaining characters.
@@ -630,7 +657,7 @@ void clearInputBuffer();
  * @param haystack The string in which replacements will be made.
  * @param maxLength The maximum length of the string to consider for replacements.
  */
-void charReplace(const char old, const char new, char* haystack, const int maxLength);
+void charReplace(const char old, const char new, char *haystack, const int maxLength);
 
 /**
  * @brief Merges two strings into a new dynamically allocated string.
@@ -644,7 +671,7 @@ void charReplace(const char old, const char new, char* haystack, const int maxLe
  * @return A dynamically allocated string containing the concatenated result of `str1` and `str2`.
  *         The caller is responsible for freeing the allocated memory.
  */
-char* mergeStr(const char* str1, const char* str2);
+char *mergeStr(const char *str1, const char *str2);
 
 /**
  * @brief Compares two strings for equality.
@@ -656,7 +683,7 @@ char* mergeStr(const char* str1, const char* str2);
  * @param str2 The second string to be compared.
  * @return TRUE if the strings are equal, FALSE otherwise.
  */
-boolean strCmp(const char* str1, const char* str2);
+boolean strCmp(const char *str1, const char *str2);
 
 /**
  * @brief Compares two strings for equality, ignoring case.
@@ -668,7 +695,7 @@ boolean strCmp(const char* str1, const char* str2);
  * @param str2 The second string to be compared.
  * @return TRUE if the strings are equal, ignoring case; FALSE otherwise.
  */
-boolean strCmpIgnoreCase(const char* str1, const char* str2);
+boolean strCmpIgnoreCase(const char *str1, const char *str2);
 
 /**
  * @brief Allocates memory for a TSongInfos structure.
@@ -689,7 +716,7 @@ TSongInfos allocateSongInfos();
  *
  * @param file The file pointer to the song data file.
  */
-void setIndexCount(FILE* file);
+void setIndexCount(FILE *file);
 
 /**
  * @brief Compares two songs based on their names.
@@ -702,7 +729,7 @@ void setIndexCount(FILE* file);
  * @return An integer less than, equal to, or greater than zero if the name of the first song is found,
  *         respectively, to be less than, equal to, or greater than the name of the second song.
  */
-int compareSongsByName(const void* a, const void* b);
+int compareSongsByName(const void *a, const void *b);
 
 /**
  * @brief Compares two songs based on their albums.
@@ -715,7 +742,7 @@ int compareSongsByName(const void* a, const void* b);
  * @return An integer less than, equal to, or greater than zero if the album of the first song is found,
  *         respectively, to be less than, equal to, or greater than the album of the second song.
  */
-int compareSongsByAlbum(const void* a, const void* b);
+int compareSongsByAlbum(const void *a, const void *b);
 
 /**
  * @brief Compares two songs based on their artists.
@@ -728,7 +755,7 @@ int compareSongsByAlbum(const void* a, const void* b);
  * @return An integer less than, equal to, or greater than zero if the artist of the first song is found,
  *         respectively, to be less than, equal to, or greater than the artist of the second song.
  */
-int compareSongsByArtist(const void* a, const void* b);
+int compareSongsByArtist(const void *a, const void *b);
 
 /**
  * @brief Compares two songs based on their year of publishing in descending order.
@@ -741,7 +768,7 @@ int compareSongsByArtist(const void* a, const void* b);
  * @return A positive integer if the publication year of the first song is less than that of the second song,
  *         0 if they are equal, and a negative integer if the publication year of the first song is greater than that of the second song.
  */
-int compareSongsByYearOfPublishingNew2Old(const void* a, const void* b);
+int compareSongsByYearOfPublishingNew2Old(const void *a, const void *b);
 
 /**
  * @brief Compares two songs based on their year of publishing in ascending order.
@@ -754,7 +781,7 @@ int compareSongsByYearOfPublishingNew2Old(const void* a, const void* b);
  * @return A negative integer if the publication year of the first song is less than that of the second song,
  *         0 if they are equal, and a positive integer if the publication year of the first song is greater than that of the second song.
  */
-int compareSongsByYearOfPublishingOld2New(const void* a, const void* b);
+int compareSongsByYearOfPublishingOld2New(const void *a, const void *b);
 
 /**
  * @brief Compares two songs based on their rating in descending order.
@@ -769,7 +796,7 @@ int compareSongsByYearOfPublishingOld2New(const void* a, const void* b);
  *         0 if they have the same rating (sorts by index in ascending order in this case),
  *         and a negative integer if the rating of the first song is greater than that of the second song.
  */
-int compareSongsWorse2Best(const void* a, const void* b);
+int compareSongsWorse2Best(const void *a, const void *b);
 
 /**
  * @brief Compares two songs based on their rating in ascending order.
@@ -784,7 +811,7 @@ int compareSongsWorse2Best(const void* a, const void* b);
  *         0 if they have the same rating (sorts by index in ascending order in this case),
  *         and a negative integer if the rating of the first song is less than that of the second song.
  */
-int compareSongsBest2Worse(const void* a, const void* b);
+int compareSongsBest2Worse(const void *a, const void *b);
 
 /**
  * @brief Frees the dynamically allocated memory of a `TSongInfos` structure.
@@ -796,6 +823,7 @@ int compareSongsBest2Worse(const void* a, const void* b);
  */
 void freeSongInfos(const TSongInfos songInfos);
 
+
 /**
  * @brief Returns the maximum of two integers.
  *
@@ -805,7 +833,9 @@ void freeSongInfos(const TSongInfos songInfos);
  * @param b The second integer.
  * @return The maximum of the two integers.
  */
+ /*
 int max(const int a, const int b);
+*/
 
 /**
  * @brief Frees allocated memory and performs cleanup before program exit.
