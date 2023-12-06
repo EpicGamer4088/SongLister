@@ -12,6 +12,7 @@
 int indexCount = 0;
 String fullSongListFilePath = NULL;
 String fullMusicFolderFilePath = NULL;
+String fullUserDataFilePath = NULL;
 UserData userData = {NULL, NULL, 0};
 
 void Main()
@@ -19,8 +20,9 @@ void Main()
     signal(SIGINT, exitHandler); // SIGINT is triggered, for example, by Ctrl+C
     signal(SIGTERM, exitHandler); // SIGTERM is triggered, for example, when exiting by the X in the top right
 
-    fullSongListFilePath = (String) malloc(MAX_STR_LEN * sizeof(String));
-    fullMusicFolderFilePath = (String) malloc(MAX_STR_LEN * sizeof(String));
+    fullSongListFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
+    fullMusicFolderFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
+    fullUserDataFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
     const TSongInfos songInfos = {0, NULL, NULL, NULL, NULL, 0};
 
     checkAndHandleUserDataFile();
@@ -36,16 +38,6 @@ void MainMenu(const TSongInfos songInfos)
 
     while (TRUE)
     {
-        /*while (!songFileLoaded)
-        {
-
-            printTitelScreen();
-            fullSongListFilePath = openCSVFileDialog();
-            file = selectSongDataFile("rwat+", &songFileLoaded);
-            setIndexCount();
-
-        }*/
-
         system("cls");
         printTitelScreen();
         printMenuOptions(selectedOption);
@@ -58,11 +50,13 @@ void MainMenu(const TSongInfos songInfos)
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 6 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 6) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -70,53 +64,53 @@ void MainMenu(const TSongInfos songInfos)
 
     switch (selectedOption)
     {
-        case 1:
-            addNewSong();
-            usleep(500000);
-            MainMenu(songInfos);
-            break;
-        case 2:
-            removeSong();
-            usleep(1000000);
-            MainMenu(songInfos);
-            break;
-        case 3:
-            changeSongInformations();
-            usleep(500000);
-            MainMenu(songInfos);
-            break;
-        case 4:
-            displayListedSongs();
-            usleep(500000);
-            MainMenu(songInfos);
-            break;
-        case 5:
+    case 1:
+        addNewSong();
+        usleep(500000);
+        MainMenu(songInfos);
+        break;
+    case 2:
+        removeSong();
+        usleep(1000000);
+        MainMenu(songInfos);
+        break;
+    case 3:
+        changeSongInformations();
+        usleep(500000);
+        MainMenu(songInfos);
+        break;
+    case 4:
+        displayListedSongs();
+        usleep(500000);
+        MainMenu(songInfos);
+        break;
+    case 5:
 
-            break;
-        case 6:
-            freeSongInfos(songInfos);
-            exitProgramm(0);
-        default:
-            break;
+        break;
+    case 6:
+        freeSongInfos(songInfos);
+        exitProgramm(0);
+    default:
+        break;
     }
 }
 
 void printTitelScreen()
 {
     printf("--------------------------------\n"
-           "|                              |\n"
-           "|          Song Rater          |\n"
-           "|                              |\n"
-           "--------------------------------\n");
+        "|                              |\n"
+        "|          Song Rater          |\n"
+        "|                              |\n"
+        "--------------------------------\n");
 }
 
 void printListOptionsTitelScreen()
 {
     printf("-----------------------------------\n"
-           "|                                 |\n"
-           "|           Song Lister           |\n"
-           "|                                 |\n"
-           "-----------------------------------\n");
+        "|                                 |\n"
+        "|           Song Lister           |\n"
+        "|                                 |\n"
+        "-----------------------------------\n");
 }
 
 void printMenuOptions(const int selectedOption)
@@ -223,7 +217,8 @@ String openCSVFileDialog()
     if (GetOpenFileName(&ofn) == TRUE)
     {
         return filePath;
-    } else
+    }
+    else
     {
         return NULL;
     }
@@ -248,7 +243,8 @@ String openFolderDialog()
         SHGetPathFromIDList(pidl, folderPath);
         CoTaskMemFree(pidl);
         return folderPath;
-    } else
+    }
+    else
     {
         return NULL;
     }
@@ -256,12 +252,14 @@ String openFolderDialog()
 
 void checkAndHandleUserDataFile()
 {
-    FILE *file = fopen(USERDATA_FILE, "rt");
+    fullUserDataFilePath = mergeStr(setWorkingDirectoryToExecutablePath(), USERDATA_FILE_NAME);
+
+    FILE* file = fopen(fullUserDataFilePath, "rt");
 
     if (file == NULL)
     {
         // File does not exist, create the file
-        file = fopen(USERDATA_FILE, "w");
+        file = fopen(fullUserDataFilePath, "wt");
 
         if (file != NULL)
         {
@@ -269,11 +267,13 @@ void checkAndHandleUserDataFile()
             setUserData();
             writeUserDataIntoUserDataFile();
             fclose(file);
-        } else
+        }
+        else
         {
             printf("Error creating file.\n");
         }
-    } else
+    }
+    else
     {
         // File exists, read UserData from the file
         readUserDataFromUserDataFile();
@@ -281,13 +281,17 @@ void checkAndHandleUserDataFile()
     }
 }
 
-void checkAndHandleMusicFileFolder() {
+void checkAndHandleMusicFileFolder()
+{
     // Check if the folder already exists
     if (!(PathFileExistsA(fullMusicFolderFilePath)))
     {
         // Create folder because it doesn't exist
-        if (CreateDirectoryA(fullMusicFolderFilePath, NULL)) {
-        } else {
+        if (CreateDirectoryA(fullMusicFolderFilePath, NULL))
+        {
+        }
+        else
+        {
             printf("Error creating folder.\n");
         }
     }
@@ -302,7 +306,12 @@ void setUserData()
 
 void writeUserDataIntoUserDataFile()
 {
-    FILE *file = fopen(USERDATA_FILE, "w");
+    FILE* file = fopen(fullUserDataFilePath, "wt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
 
     fprintf(file, "%s;%s;%d", fullSongListFilePath, fullMusicFolderFilePath, indexCount);
 
@@ -311,27 +320,32 @@ void writeUserDataIntoUserDataFile()
 
 void readUserDataFromUserDataFile()
 {
-    FILE *file = fopen(USERDATA_FILE, "rt");
+    FILE* file = fopen(fullUserDataFilePath, "rt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
 
     fscanf(file, "%[^;];%[^;];%d", fullSongListFilePath, fullMusicFolderFilePath, &indexCount);
 
     fclose(file);
 }
 
-FILE *openFile(const String filePath, const String mode)
+FILE* openFile(const String filePath, const String mode)
 {
     return fopen(filePath, mode);
 }
 
-FILE *reopenFile(FILE *file,const String filePath, const String mode)
+FILE* reopenFile(FILE* file, const String filePath, const String mode)
 {
     fclose(file);
     return fopen(filePath, mode);
 }
 
-FILE *selectSongDataFile(const char *mode, bool *songFileLoaded)
+FILE* selectSongDataFile(const char* mode, bool* songFileLoaded)
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
 
     // Check if File alredy exists
     if (access(fullSongListFilePath, F_OK) == -1)
@@ -386,14 +400,15 @@ TSongInfos inputSongInfos()
     {
         printf("Your Rating (1-5):");
         scanf("%hd", &songInfos.rating);
-    } while (!(songInfos.rating >= 1 && songInfos.rating <= 5));
+    }
+    while (!(songInfos.rating >= 1 && songInfos.rating <= 5));
 
     return songInfos;
 }
 
 void addNewSong()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
 
     // Open File to Attach
     file = fopen(fullSongListFilePath, "at");
@@ -409,7 +424,8 @@ void addNewSong()
     if (ftell(file) == 0)
     {
         indexCount = 0;
-    } else
+    }
+    else
     {
         fseek(file, -1, SEEK_CUR);
 
@@ -449,12 +465,12 @@ void addNewSong()
 
 void removeSong()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
 
     int index;
 
     printf("Input the Index of the Entry you want to delete.\n"
-           "To display your Song List inclusive the Index of every Song, Type \"-1\"\n\n");
+        "To display your Song List inclusive the Index of every Song, Type \"-1\"\n\n");
     scanf("%d", &index);
     if (index < 0)
     {
@@ -463,7 +479,8 @@ void removeSong()
         {
             printf("\nIndex of which song you wanna remove from the list:");
             scanf("%d", &index);
-        } while (index < 0);
+        }
+        while (index < 0);
     }
 
     TSongInfos songs[indexCount];
@@ -520,7 +537,8 @@ void removeSong()
                 fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", songs[j].index,
                         songs[j].name, songs[j].album, songs[j].artist,
                         songs[j].genre, songs[j].yearPublished, songs[j].rating);
-            } else
+            }
+            else
             {
                 fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", songs[j].index - 1,
                         songs[j].name, songs[j].album, songs[j].artist,
@@ -548,12 +566,12 @@ void removeSong()
 
 void changeSongInformations()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
 
     int index;
 
     printf("Input the Index of the Entrie you wanna edit.\n"
-           "To display your Song List inclusive the Index of every Song, Type \"-1\"\n\n");
+        "To display your Song List inclusive the Index of every Song, Type \"-1\"\n\n");
     scanf("%d", &index);
     if (index < 0)
     {
@@ -562,7 +580,8 @@ void changeSongInformations()
         {
             printf("Index of which song you wanna change the Informtion of:");
             scanf("%d", &index);
-        } while (index < 0);
+        }
+        while (index < 0);
     }
 
     printf("\nEnter new Song Informations:");
@@ -621,7 +640,8 @@ void changeSongInformations()
             fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", songs[j].index,
                     songs[j].name, songs[j].album, songs[j].artist,
                     songs[j].genre, songs[j].yearPublished, songs[j].rating);
-        } else
+        }
+        else
         {
             fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", index,
                     songInfos.name, songInfos.album, songInfos.artist,
@@ -665,11 +685,13 @@ void changeUserData()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -677,20 +699,20 @@ void changeUserData()
 
     switch (selectedOption)
     {
-        case 1:
-            fullSongListFilePath = openCSVFileDialog();
-            writeUserDataIntoUserDataFile();
-            changeUserData();
-            break;
-        case 2:
-            fullMusicFolderFilePath = openFolderDialog();
-            writeUserDataIntoUserDataFile();
-            changeUserData();
-            break;
-        case 3:
-            break;
-        default:
-            break;
+    case 1:
+        fullSongListFilePath = openCSVFileDialog();
+        writeUserDataIntoUserDataFile();
+        changeUserData();
+        break;
+    case 2:
+        fullMusicFolderFilePath = openFolderDialog();
+        writeUserDataIntoUserDataFile();
+        changeUserData();
+        break;
+    case 3:
+        break;
+    default:
+        break;
     }
 }
 
@@ -738,11 +760,13 @@ void displayListedSongs()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -750,24 +774,24 @@ void displayListedSongs()
 
     switch (selectedOption)
     {
-        case 1:
-            displayListedSongsStatic();
-            displayListedSongs();
-            break;
-        case 2:
-            displayListedSongsSorted();
-            displayListedSongs();
-            break;
-        case 3:
-            break;
-        default:
-            break;
+    case 1:
+        displayListedSongsStatic();
+        displayListedSongs();
+        break;
+    case 2:
+        displayListedSongsSorted();
+        displayListedSongs();
+        break;
+    case 3:
+        break;
+    default:
+        break;
     }
 }
 
 void displayListedSongsStatic()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -831,11 +855,13 @@ void displayListedSongsSorted()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 7 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 7) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -843,34 +869,34 @@ void displayListedSongsSorted()
 
     switch (selectedOption)
     {
-        case 1:
-            displayListedSongsSortedByName();
-            displayListedSongsSorted();
-            break;
-        case 2:
-            displayListedSongsSortedByAlbum();
-            displayListedSongsSorted();
-            break;
-        case 3:
-            displayListedSongsSortedByArtist();
-            displayListedSongsSorted();
-            break;
-        case 4:
-            displayListedSongsByGenre();
-            displayListedSongsSorted();
-            break;
-        case 5:
-            displayListedSongsByYearOfPublishing();
-            displayListedSongsSorted();
-            break;
-        case 6:
-            displayListedSongsByRating();
-            displayListedSongsSorted();
-            break;
-        case 7:
-            break;
-        default:
-            break;
+    case 1:
+        displayListedSongsSortedByName();
+        displayListedSongsSorted();
+        break;
+    case 2:
+        displayListedSongsSortedByAlbum();
+        displayListedSongsSorted();
+        break;
+    case 3:
+        displayListedSongsSortedByArtist();
+        displayListedSongsSorted();
+        break;
+    case 4:
+        displayListedSongsByGenre();
+        displayListedSongsSorted();
+        break;
+    case 5:
+        displayListedSongsByYearOfPublishing();
+        displayListedSongsSorted();
+        break;
+    case 6:
+        displayListedSongsByRating();
+        displayListedSongsSorted();
+        break;
+    case 7:
+        break;
+    default:
+        break;
     }
 }
 
@@ -895,11 +921,13 @@ void displayListedSongsSortedByName()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -907,24 +935,24 @@ void displayListedSongsSortedByName()
 
     switch (selectedOption)
     {
-        case 1:
-            displayListedSongsSortedByNameA2Z();
-            displayListedSongsSortedByName();
-            break;
-        case 2:
-            displayListedSongInfosFromAGivenSong();
-            displayListedSongsSortedByName();
-            break;
-        case 3:
-            break;
-        default:
-            break;
+    case 1:
+        displayListedSongsSortedByNameA2Z();
+        displayListedSongsSortedByName();
+        break;
+    case 2:
+        displayListedSongInfosFromAGivenSong();
+        displayListedSongsSortedByName();
+        break;
+    case 3:
+        break;
+    default:
+        break;
     }
 }
 
 void displayListedSongsSortedByNameA2Z()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
 
     TSongInfos songs[indexCount];
 
@@ -945,10 +973,10 @@ void displayListedSongsSortedByNameA2Z()
     }
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -982,7 +1010,7 @@ void displayListedSongsSortedByNameA2Z()
 void displayListedSongInfosFromAGivenSong()
 {
     system("cls");
-    FILE *file = NULL;
+    FILE* file = NULL;
 
     // Read the song data from the file
     TSongInfos songs[indexCount];
@@ -1066,11 +1094,13 @@ void displayListedSongsSortedByAlbum()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -1078,24 +1108,24 @@ void displayListedSongsSortedByAlbum()
 
     switch (selectedOption)
     {
-        case 1:
-            displayListedSongsSortedByAlbumA2Z();
-            displayListedSongsSortedByAlbum();
-            break;
-        case 2:
-            displayListedSongsWithAGivenAlbum();
-            displayListedSongsSortedByAlbum();
-            break;
-        case 3:
-            break;
-        default:
-            break;
+    case 1:
+        displayListedSongsSortedByAlbumA2Z();
+        displayListedSongsSortedByAlbum();
+        break;
+    case 2:
+        displayListedSongsWithAGivenAlbum();
+        displayListedSongsSortedByAlbum();
+        break;
+    case 3:
+        break;
+    default:
+        break;
     }
 }
 
 void displayListedSongsSortedByAlbumA2Z()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -1145,7 +1175,7 @@ void displayListedSongsWithAGivenAlbum()
 {
     system("cls");
 
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -1227,11 +1257,13 @@ void displayListedSongsSortedByArtist()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -1239,24 +1271,24 @@ void displayListedSongsSortedByArtist()
 
     switch (selectedOption)
     {
-        case 1:
-            displayListedSongsSortedByArtistA2Z();
-            displayListedSongsSortedByArtist();
-            break;
-        case 2:
-            displayListedSongsWithAGivenArtist();
-            displayListedSongsSortedByArtist();
-            break;
-        case 3:
-            break;
-        default:
-            break;
+    case 1:
+        displayListedSongsSortedByArtistA2Z();
+        displayListedSongsSortedByArtist();
+        break;
+    case 2:
+        displayListedSongsWithAGivenArtist();
+        displayListedSongsSortedByArtist();
+        break;
+    case 3:
+        break;
+    default:
+        break;
     }
 }
 
 void displayListedSongsSortedByArtistA2Z()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -1277,10 +1309,10 @@ void displayListedSongsSortedByArtistA2Z()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1315,7 +1347,7 @@ void displayListedSongsWithAGivenArtist()
 {
     system("cls");
 
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -1380,9 +1412,9 @@ void displayListedSongsByGenre()
 {
     system("cls");
 
-    FILE *file = NULL;
+    FILE* file = NULL;
     // Dynamic allocation for the entered genre name
-    char *searchGenre = malloc(MAX_STR_LEN);
+    char* searchGenre = malloc(MAX_STR_LEN);
 
     if (searchGenre == NULL)
     {
@@ -1404,7 +1436,7 @@ void displayListedSongsByGenre()
     charReplace('\n', '\0', searchGenre, MAX_STR_LEN);
 
     // Dynamic allocation for the song information
-    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
+    TSongInfos* songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL)
     {
@@ -1451,10 +1483,10 @@ void displayListedSongsByGenre()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1511,11 +1543,13 @@ void displayListedSongsByYearOfPublishing()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 6 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 6) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -1523,36 +1557,36 @@ void displayListedSongsByYearOfPublishing()
 
     switch (selectedOption)
     {
-        case 1:
-            displayListedSongsByYearOfPublishingNew2Old();
-            displayListedSongsByYearOfPublishing();
-            break;
-        case 2:
-            displayListedSongsByYearOfPublishingOld2New();
-            displayListedSongsByYearOfPublishing();
-            break;
-        case 3:
-            displayListedSongsNewerThanTheGivenYear();
-            displayListedSongsByYearOfPublishing();
-            break;
-        case 4:
-            displayListedSongsOlderThanTheGivenYear();
-            displayListedSongsByYearOfPublishing();
-            break;
-        case 5:
-            displayListedSongsWithAGivenYearOfPublishing();
-            displayListedSongsByYearOfPublishing();
-            break;
-        case 6:
-            break;
-        default:
-            break;
+    case 1:
+        displayListedSongsByYearOfPublishingNew2Old();
+        displayListedSongsByYearOfPublishing();
+        break;
+    case 2:
+        displayListedSongsByYearOfPublishingOld2New();
+        displayListedSongsByYearOfPublishing();
+        break;
+    case 3:
+        displayListedSongsNewerThanTheGivenYear();
+        displayListedSongsByYearOfPublishing();
+        break;
+    case 4:
+        displayListedSongsOlderThanTheGivenYear();
+        displayListedSongsByYearOfPublishing();
+        break;
+    case 5:
+        displayListedSongsWithAGivenYearOfPublishing();
+        displayListedSongsByYearOfPublishing();
+        break;
+    case 6:
+        break;
+    default:
+        break;
     }
 }
 
 void displayListedSongsByYearOfPublishingNew2Old()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -1573,10 +1607,10 @@ void displayListedSongsByYearOfPublishingNew2Old()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1609,7 +1643,7 @@ void displayListedSongsByYearOfPublishingNew2Old()
 
 void displayListedSongsByYearOfPublishingOld2New()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -1630,10 +1664,10 @@ void displayListedSongsByYearOfPublishingOld2New()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1668,7 +1702,7 @@ void displayListedSongsNewerThanTheGivenYear()
 {
     system("cls");
 
-    FILE *file = NULL;
+    FILE* file = NULL;
     int givenYear;
 
     // User input for the desired publication year
@@ -1696,10 +1730,10 @@ void displayListedSongsNewerThanTheGivenYear()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1707,7 +1741,7 @@ void displayListedSongsNewerThanTheGivenYear()
     fclose(file);
 
     // Filter the songs according to the entered release year
-    TSongInfos *filteredSongs = malloc(i * sizeof(TSongInfos));
+    TSongInfos* filteredSongs = malloc(i * sizeof(TSongInfos));
     int filteredCount = 0;
 
     for (int j = 0; j < i; j++)
@@ -1748,7 +1782,7 @@ void displayListedSongsOlderThanTheGivenYear()
 {
     system("cls");
 
-    FILE *file = NULL;
+    FILE* file = NULL;
     int givenYear;
 
     // User input for the desired publication year
@@ -1776,10 +1810,10 @@ void displayListedSongsOlderThanTheGivenYear()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1818,7 +1852,7 @@ void displayListedSongsWithAGivenYearOfPublishing()
 {
     system("cls");
 
-    FILE *file = NULL;
+    FILE* file = NULL;
     int givenYear;
 
     // User input for the desired publication year
@@ -1846,10 +1880,10 @@ void displayListedSongsWithAGivenYearOfPublishing()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1902,11 +1936,13 @@ void displayListedSongsByRating()
             if (option == 72)
             {
                 selectedOption = (selectedOption == 1) ? 4 : selectedOption - 1;
-            } else if (option == 80)
+            }
+            else if (option == 80)
             {
                 selectedOption = (selectedOption == 4) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13)
+        }
+        else if (option == 13)
         {
             break;
         }
@@ -1914,28 +1950,28 @@ void displayListedSongsByRating()
 
     switch (selectedOption)
     {
-        case 1:
-            displayListedSongsByRatingBest2Worse();
-            displayListedSongsByRating();
-            break;
-        case 2:
-            displayListedSongsByRatingWorse2Best();
-            displayListedSongsByRating();
-            break;
-        case 3:
-            displayListedSongsWithAGivenRating();
-            displayListedSongsByRating();
-            break;
-        case 4:
-            break;
-        default:
-            break;
+    case 1:
+        displayListedSongsByRatingBest2Worse();
+        displayListedSongsByRating();
+        break;
+    case 2:
+        displayListedSongsByRatingWorse2Best();
+        displayListedSongsByRating();
+        break;
+    case 3:
+        displayListedSongsWithAGivenRating();
+        displayListedSongsByRating();
+        break;
+    case 4:
+        break;
+    default:
+        break;
     }
 }
 
 void displayListedSongsByRatingBest2Worse()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -1956,10 +1992,10 @@ void displayListedSongsByRatingBest2Worse()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -1983,7 +2019,7 @@ void displayListedSongsByRatingBest2Worse()
 
 void displayListedSongsByRatingWorse2Best()
 {
-    FILE *file = NULL;
+    FILE* file = NULL;
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
@@ -2004,10 +2040,10 @@ void displayListedSongsByRatingWorse2Best()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -2033,7 +2069,7 @@ void displayListedSongsWithAGivenRating()
 {
     system("cls");
 
-    FILE *file = NULL;
+    FILE* file = NULL;
     int givenRating;
 
     // User input for the desired rating
@@ -2061,10 +2097,10 @@ void displayListedSongsWithAGivenRating()
 
     int i = 0;
     while (i < indexCount &&
-           fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                  &(songs[i].index), songs[i].name, songs[i].album,
-                  songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                  &(songs[i].rating)) == 7)
+        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
+               &(songs[i].index), songs[i].name, songs[i].album,
+               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
+               &(songs[i].rating)) == 7)
     {
         i++;
     }
@@ -2111,7 +2147,7 @@ void clearInputBuffer()
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void charReplace(const char old, const char new, char *haystack, const int maxLength)
+void charReplace(const char old, const char new, char* haystack, const int maxLength)
 {
     for (int i = 0; i < maxLength && haystack[i] != '\0'; i++)
     {
@@ -2122,7 +2158,7 @@ void charReplace(const char old, const char new, char *haystack, const int maxLe
     }
 }
 
-char *mergeStr(const char *str1, const char *str2)
+char* mergeStr(const char* str1, const char* str2)
 {
     int len1 = 0;
     int len2 = 0;
@@ -2137,7 +2173,7 @@ char *mergeStr(const char *str1, const char *str2)
         len2++;
     }
 
-    const String mergedStr = (String) malloc(len1 + len2 + 1);
+    const String mergedStr = (String)malloc(len1 + len2 + 1);
 
     if (mergedStr == NULL)
     {
@@ -2159,7 +2195,7 @@ char *mergeStr(const char *str1, const char *str2)
     return mergedStr;
 }
 
-bool strCmp(const char *str1, const char *str2)
+bool strCmp(const char* str1, const char* str2)
 {
     while (*str1 != '\0' && *str2 != '\0')
     {
@@ -2173,11 +2209,11 @@ bool strCmp(const char *str1, const char *str2)
     return TRUE;
 }
 
-bool strCmpIgnoreCase(const char *str1, const char *str2)
+bool strCmpIgnoreCase(const char* str1, const char* str2)
 {
     while (*str1 && *str2)
     {
-        if (tolower((unsigned char) *str1) != tolower((unsigned char) *str2))
+        if (tolower((unsigned char)*str1) != tolower((unsigned char)*str2))
             return 0;
         str1++;
         str2++;
@@ -2188,12 +2224,12 @@ bool strCmpIgnoreCase(const char *str1, const char *str2)
 TSongInfos allocateSongInfos()
 {
     const TSongInfos songInfos = {
-            0,
-            (String) malloc(MAX_STR_LEN * sizeof(String)),
-            (String) malloc(MAX_STR_LEN * sizeof(String)),
-            (String) malloc(MAX_STR_LEN * sizeof(String)),
-            (String) malloc(MAX_STR_LEN * sizeof(String)),
-            0
+        0,
+        (String)malloc(MAX_STR_LEN * sizeof(String)),
+        (String)malloc(MAX_STR_LEN * sizeof(String)),
+        (String)malloc(MAX_STR_LEN * sizeof(String)),
+        (String)malloc(MAX_STR_LEN * sizeof(String)),
+        0
     };
 
     return songInfos;
@@ -2201,7 +2237,7 @@ TSongInfos allocateSongInfos()
 
 void setIndexCount()
 {
-    FILE *file = fopen(fullSongListFilePath, "r");
+    FILE* file = fopen(fullSongListFilePath, "r");
 
     indexCount = 0;
 
@@ -2242,53 +2278,73 @@ void setIndexCount()
     fclose(file);
 }
 
-int compareSongsByName(const void *a, const void *b)
+String setWorkingDirectoryToExecutablePath() {
+    // Reserve dynamic memory for the buffer
+    char* buffer = (char*)malloc(MAX_PATH);
+    if (buffer == NULL) {
+        // Memory allocation error
+        return NULL;
+    }
+
+    GetModuleFileName(NULL, buffer, MAX_PATH);
+
+    // Removing the filename to keep just the directory
+    char* lastBackslash = strrchr(buffer, '\\');
+    if (lastBackslash != NULL) {
+        *lastBackslash = '\0';
+    }
+
+    // Return dynamic reserved path
+    return buffer;
+}
+
+int compareSongsByName(const void* a, const void* b)
 {
-    const TSongInfos *songA = (const TSongInfos *) a;
-    const TSongInfos *songB = (const TSongInfos *) b;
+    const TSongInfos* songA = (const TSongInfos*)a;
+    const TSongInfos* songB = (const TSongInfos*)b;
 
     return strcmp(songA->name, songB->name);
 }
 
-int compareSongsByAlbum(const void *a, const void *b)
+int compareSongsByAlbum(const void* a, const void* b)
 {
-    const TSongInfos *songA = (const TSongInfos *) a;
-    const TSongInfos *songB = (const TSongInfos *) b;
+    const TSongInfos* songA = (const TSongInfos*)a;
+    const TSongInfos* songB = (const TSongInfos*)b;
 
     // Compare the albums and sort in ascending order
     return strcmp(songA->album, songB->album);
 }
 
-int compareSongsByArtist(const void *a, const void *b)
+int compareSongsByArtist(const void* a, const void* b)
 {
-    const TSongInfos *songA = (const TSongInfos *) a;
-    const TSongInfos *songB = (const TSongInfos *) b;
+    const TSongInfos* songA = (const TSongInfos*)a;
+    const TSongInfos* songB = (const TSongInfos*)b;
 
     return strcmp(songA->artist, songB->artist);
 }
 
-int compareSongsByYearOfPublishingNew2Old(const void *a, const void *b)
+int compareSongsByYearOfPublishingNew2Old(const void* a, const void* b)
 {
-    const TSongInfos *songA = (const TSongInfos *) a;
-    const TSongInfos *songB = (const TSongInfos *) b;
+    const TSongInfos* songA = (const TSongInfos*)a;
+    const TSongInfos* songB = (const TSongInfos*)b;
 
     // Sort by publication year in descending order
     return songB->yearPublished - songA->yearPublished;
 }
 
-int compareSongsByYearOfPublishingOld2New(const void *a, const void *b)
+int compareSongsByYearOfPublishingOld2New(const void* a, const void* b)
 {
-    const TSongInfos *songA = (const TSongInfos *) a;
-    const TSongInfos *songB = (const TSongInfos *) b;
+    const TSongInfos* songA = (const TSongInfos*)a;
+    const TSongInfos* songB = (const TSongInfos*)b;
 
     // Sort by publication year in ascending order
     return songA->yearPublished - songB->yearPublished;
 }
 
-int compareSongsWorse2Best(const void *a, const void *b)
+int compareSongsWorse2Best(const void* a, const void* b)
 {
-    const TSongInfos *songA = (const TSongInfos *) a;
-    const TSongInfos *songB = (const TSongInfos *) b;
+    const TSongInfos* songA = (const TSongInfos*)a;
+    const TSongInfos* songB = (const TSongInfos*)b;
 
     // First sort by rating in descending order
     if (songB->rating != songA->rating)
@@ -2300,10 +2356,10 @@ int compareSongsWorse2Best(const void *a, const void *b)
     return songA->index - songB->index;
 }
 
-int compareSongsBest2Worse(const void *a, const void *b)
+int compareSongsBest2Worse(const void* a, const void* b)
 {
-    const TSongInfos *songA = (const TSongInfos *) a;
-    const TSongInfos *songB = (const TSongInfos *) b;
+    const TSongInfos* songA = (const TSongInfos*)a;
+    const TSongInfos* songB = (const TSongInfos*)b;
 
     // First sort by rating in ascending order
     if (songA->rating != songB->rating)
@@ -2334,4 +2390,5 @@ void exitHandler()
 {
     free(fullSongListFilePath);
     free(fullMusicFolderFilePath);
+    free(fullUserDataFilePath);
 }

@@ -7,7 +7,7 @@
 
 #define DEFAULT_FILE_NAME "SongList"
 #define DEFAULT_FILE_PATH "../"
-#define USERDATA_FILE "UserData.csv"
+#define USERDATA_FILE_NAME "/userdata.bin"
 
 /**
  * @brief Defines the type `String` as a pointer to a null-terminated char array.
@@ -34,7 +34,11 @@ extern int indexCount;
  */
 extern String fullSongListFilePath;
 
+
 extern String fullMusicFolderFilePath;
+
+
+extern String fullUserDataFilePath;
 
 /**
  * @brief Defines a structure `UserData` to represent user-specific data.
@@ -48,7 +52,8 @@ typedef struct UserData
     String fullSongListFilePath;          /**< Full file path for storing song data list. */
     String fullMusicFolderFilePath;   /**< Full file path for the music folder. */
     int indexCount;                   /**< Count of song entries in the data list. */
-} UserData;
+}
+UserData;
 
 extern UserData userData;
 
@@ -742,6 +747,9 @@ TSongInfos allocateSongInfos();
  * @param file The file pointer to the song data file.
  */
 void setIndexCount();
+
+
+String setWorkingDirectoryToExecutablePath();
 
 /**
  * @brief Compares two songs based on their names.
