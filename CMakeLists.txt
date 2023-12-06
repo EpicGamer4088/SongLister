@@ -9,3 +9,5 @@ add_executable(Projekt2AHITNGr1 main.c
         songs.h
         songs.c
         songs.h)
+
+target_link_libraries(Projekt2AHITNGr1 shlwapi)
