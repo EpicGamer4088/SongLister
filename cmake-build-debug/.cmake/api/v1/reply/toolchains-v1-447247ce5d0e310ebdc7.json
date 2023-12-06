@@ -1,0 +1,75 @@
+{
+	"kind" : "toolchains",
+	"toolchains" : 
+	[
+		{
+			"compiler" : 
+			{
+				"id" : "GNU",
+				"implicit" : 
+				{
+					"includeDirectories" : 
+					[
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include",
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/include",
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed",
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/x86_64-w64-mingw32/include"
+					],
+					"linkDirectories" : 
+					[
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0",
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/lib/gcc",
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/x86_64-w64-mingw32/lib",
+						"H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/lib"
+					],
+					"linkFrameworkDirectories" : [],
+					"linkLibraries" : 
+					[
+						"mingw32",
+						"gcc",
+						"moldname",
+						"mingwex",
+						"kernel32",
+						"pthread",
+						"advapi32",
+						"shell32",
+						"user32",
+						"kernel32",
+						"iconv",
+						"mingw32",
+						"gcc",
+						"moldname",
+						"mingwex",
+						"kernel32"
+					]
+				},
+				"path" : "H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/bin/gcc.exe",
+				"version" : "13.1.0"
+			},
+			"language" : "C",
+			"sourceFileExtensions" : 
+			[
+				"c",
+				"m"
+			]
+		},
+		{
+			"compiler" : 
+			{
+				"implicit" : {},
+				"path" : "H:/Programmieren/JetBrains/apps/CLion-Nova/ch-0/233.11868/bin/mingw/bin/windres.exe"
+			},
+			"language" : "RC",
+			"sourceFileExtensions" : 
+			[
+				"rc",
+				"RC"
+			]
+		}
+	],
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

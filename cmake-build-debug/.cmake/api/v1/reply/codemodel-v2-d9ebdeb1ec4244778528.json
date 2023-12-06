@@ -1,0 +1,60 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26.4"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Projekt2AHITNGr1",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Projekt2AHITNGr1::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Projekt2AHITNGr1-Debug-97b72fa80088fe1d088b.json",
+					"name" : "Projekt2AHITNGr1",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug",
+		"source" : "H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
