@@ -3,11 +3,8 @@
 
 #include <stdio.h>
 
-#define MAX_STR_LEN 255
-
-#define DEFAULT_FILE_NAME "SongList"
-#define DEFAULT_FILE_PATH "../"
-#define USERDATA_FILE_NAME "/userdata.bin"
+#define MAX_STR_LEN 255                         // Maximum String Length
+#define USERDATA_FILE_NAME "/userdata.bin"      // File Name for Userdata
 
 /**
  * @brief Defines the type `String` as a pointer to a null-terminated char array.
@@ -30,46 +27,42 @@ extern int indexCount;
  * @brief External declaration for the variable `fullSongListFilePath`.
  *
  * The `fullSongListFilePath` variable is declared as external. It is used to store the full
- * path to the SongList CSV file and is going to be initialized in the Main function.
+ * path to the SongList CSV file. It is going to be initialized in the Main function.
  */
 extern String fullSongListFilePath;
 
-
+/**
+ * @brief External declaration for the variable `fullMusicFolderFilePath`.
+ *
+ * The `fullMusicFolderFilePath` variable is declared as external. It represents the full path
+ * to the folder where music files are stored. It's value points to the directory where music files
+ * are stored. It is going to be initialized in the Main function.
+ */
 extern String fullMusicFolderFilePath;
 
-
+/**
+ * @brief External declaration for the variable `fullUserDataFilePath`.
+ *
+ * The `fullUserDataFilePath` variable is declared as external. It serves as the full path
+ * to the UserData file, storing important program configuration data.
+ * The value points to the location of the userdata.bin file.
+ * It is going to be initialized in the Main function.
+ */
 extern String fullUserDataFilePath;
 
 /**
- * @brief Defines a structure `UserData` to represent user-specific data.
+ * @brief Defines an enumeration type `Boolean` representing Boolean values.
  *
- * The `UserData` structure includes fields such as `fullListFilePath`, `fullMusicFolderFilePath`,
- * and `indexCount`, providing a way to store the Data read in from the the UserData File
- * This structure is aliased as `UserData` for convenience.
- */
-typedef struct UserData
-{
-    String fullSongListFilePath;          /**< Full file path for storing song data list. */
-    String fullMusicFolderFilePath;   /**< Full file path for the music folder. */
-    int indexCount;                   /**< Count of song entries in the data list. */
-}
-UserData;
-
-extern UserData userData;
-
-/**
- * @brief Defines an enumeration type `bool` representing bool values.
- *
- * The `bool` type is an enumeration with two possible values: `FALSE` and `TRUE`.
- * It is used to represent bool logic in, providing a more readable
+ * The `Boolean` type is an enumeration with two possible values: `FALSE` and `TRUE`.
+ * It is used to represent Boolean logic in, providing a more readable
  * alternative to using integer values directly.
  */
-typedef enum bool
+typedef enum Boolean
 {
-    FALSE, /**< Represents the bool value `false`. */
-    TRUE   /**< Represents the bool value `true`. */
+    FALSE, /**< Represents the Boolean value `false`. */
+    TRUE   /**< Represents the Boolean value `true`. */
 }
-bool;
+Boolean;
 
 /**
  * @brief Defines a structure `SongInfos` to represent information about a song.
@@ -87,6 +80,8 @@ typedef struct SongInfos
     String genre;           /**< Genre of the song. */
     short yearPublished;    /**< Year the song was published. */
     short rating;           /**< Rating assigned to the song. */
+    String musicFileName;
+    Boolean musicFile;
 }
 TSongInfos;
 
@@ -95,7 +90,7 @@ TSongInfos;
  *
  * The `Main` function serves as the entry point for the program. It sets up signal
  * handlers for SIGINT (Ctrl+C) and SIGTERM (exit by the X in the top right), allocates
- * memory for `fullSongListFilePath`, initializes a file pointer (`file`), and declares a bool
+ * memory for `fullSongListFilePath`, initializes a file pointer (`file`), and declares a Boolean
  * variable `songFileLoaded` initialized to FALSE. It also initializes a constant
  * `TSongInfos` structure named `songInfos` with default values. Finally, the `MainMenu`
  * function is called, passing the file pointer, song file loading status, and song
@@ -107,16 +102,16 @@ void Main();
  * @brief Main menu function for handling user interaction for Start Menu.
  *
  * The `MainMenu` function takes parameters including a file pointer `file` for
- * song data, a bool `songFileLoaded` indicating whether the song file is loaded,
+ * song data, a Boolean `songFileLoaded` indicating whether the song file is loaded,
  * and a constant `TSongInfos` structure `songInfos` representing song information.
  * It presents a menu to the user, allowing them to perform various actions related
  * to song data. The function continuously runs until the user chooses to exit.
  *
  * @param file The file pointer for song data.
- * @param songFileLoaded A bool indicating whether the song file is loaded.
+ * @param songFileLoaded A Boolean indicating whether the song file is loaded.
  * @param songInfos A constant structure representing song information.
  */
-void MainMenu(const TSongInfos songInfos);
+void MainMenu();
 
 /**
  * @brief Prints the title screen for the Song Rater program.
@@ -156,7 +151,28 @@ void printMenuOptions(const int selectedOption);
  */
 void printListOptions(const int selectedOption);
 
+/**
+ * @brief Prints the menu options for music-related actions.
+ *
+ * The `printMusicOptions` function displays a menu with options for managing music files.
+ * It highlights the option specified by the `selectedOption` parameter using ">>". The menu
+ * includes options to add, remove, and change music files for a song, play a song, and go back
+ * to the main menu.
+ *
+ * @param selectedOption The user's selected option (1 to 5).
+ */
+void printMusicOptions(const int selectedOption);
 
+/**
+ * @brief Prints the menu options for changing user data paths.
+ *
+ * The `printChangeUserDataOptions` function displays a menu with options for changing paths
+ * related to user data. It highlights the option specified by the `selectedOption` parameter
+ * using ">>". The menu includes options to change the path of the SongList file, change the
+ * path of the music folder, and go back to the main menu.
+ *
+ * @param selectedOption The user's selected option (1 to 3).
+ */
 void printChangeUserDataOptions(const int selectedOption);
 
 /**
@@ -244,6 +260,17 @@ void printSortedListByRatingOptions(const int selectedOption);
 String openCSVFileDialog();
 
 /**
+ * @brief Opens a file dialog for selecting media files (MP3 or MP4).
+ *
+ * The `openMusicFileDialog` function displays a file dialog that allows the user to select a media file,
+ * specifically supporting MP3 and MP4 formats. If the user selects a file, the function returns the full path
+ * of the selected file. If no file is selected or an error occurs, the function returns NULL.
+ *
+ * @return A string containing the full path of the selected media file, or NULL if no file is selected.
+ */
+String openMusicFileDialog();
+
+/**
  * @brief Opens a folder dialog for selecting a folder.
  *
  * The `openFolderDialog` function displays a folder dialog that allows the user to select a folder.
@@ -254,51 +281,95 @@ String openCSVFileDialog();
  */
 String openFolderDialog();
 
+/**
+ * @brief Copies and renames a music file.
+ *
+ * The `copyAndRenameMusicFile` function copies a music file from the source path to the specified destination
+ * folder with a new file name. It dynamically allocates memory for the destination path and uses the Windows API
+ * function `CopyFile` to perform the file copy. If an error occurs during the copy operation, an error message is
+ * printed along with the error code. The allocated memory for the destination path is freed after the copy operation.
+ *
+ * @param srcPath      A string containing the full path of the source music file.
+ * @param destFolder   A string containing the full path of the destination folder.
+ * @param newFileName  A string containing the new file name for the copied music file.
+ */
+void copyAndRenameMusicFile(const char* srcPath, const char* destFolder, const char* newFileName);
 
+/**
+ * @brief Checks and handles the user data file.
+ *
+ * The `checkAndHandleUserDataFile` function checks if the user data file exists. If the file does not exist,
+ * it creates the file, sets user data using `setUserData`, writes user data into the file, and then closes the file.
+ * If the file already exists, it reads user data from the file using `readUserDataFromUserDataFile` and then closes
+ * the file. The full path of the user data file is determined by merging the executable path with the user data file name.
+ */
 void checkAndHandleUserDataFile();
 
-
+/**
+ * @brief Checks and handles the music file folder.
+ *
+ * The `checkAndHandleMusicFileFolder` function checks if the music file folder already exists. If the folder does not
+ * exist, it creates the folder using `CreateDirectoryA`. The full path of the music file folder is determined by the
+ * `fullMusicFolderFilePath`. If the folder creation is unsuccessful, an error message is printed.
+ */
 void checkAndHandleMusicFileFolder();
 
-
+/**
+ * @brief Sets user data related to song list and music folder paths.
+ *
+ * The `setUserData` function prompts the user to select a CSV file for the song list using `openCSVFileDialog`.
+ * It also prompts the user to select a folder for the music files using `openFolderDialog`. The selected paths
+ * are stored in the global variables `fullSongListFilePath` and `fullMusicFolderFilePath`.
+ */
 void setUserData();
 
-
+/**
+ * @brief Writes user data into the user data file.
+ *
+ * The `writeUserDataIntoUserDataFile` function opens the user data file and writes the full paths
+ * of the song list and music folder into the file. If an error occurs when opening the file, an error
+ * message is printed, and the program exits with an error code.
+ */
 void writeUserDataIntoUserDataFile();
 
-
+/**
+ * @brief Reads user data from the user data file.
+ *
+ * The `readUserDataFromUserDataFile` function reads the user data file and extracts the full paths
+ * of the song list and music folder. The extracted paths are stored in the global variables
+ * `fullSongListFilePath` and `fullMusicFolderFilePath`.
+ */
 void readUserDataFromUserDataFile();
 
-
-FILE *openFile(const String filePath, const String mode);
+/**
+ * @brief Updates user data through an interactive menu.
+ *
+ * The `updateUserData` function presents an interactive menu allowing the user to choose between updating
+ * the song list file path, updating the music folder path, or returning to the main menu. The user's selection
+ * is continuously monitored using arrow keys, and the chosen option is executed when the Enter key is pressed.
+ * This function is part of an iterative process, and it calls itself recursively based on the user's selections.
+ */
+void updateUserData();
 
 /**
- * @brief Reopens a file with the specified mode.
+ * @brief Updates the song list file path in the user data file.
  *
- * The `reopenFile` function closes the provided file using `fclose` and then reopens
- * it with the specified mode using `fopen`. The full file path is retrieved from the
- * global variable `fullSongListFilePath`. The reopened file pointer is returned.
- *
- * @param file The file pointer to be reopened.
- * @param mode The mode to be used for reopening the file (e.g., "r", "w", "a", etc.).
- * @return The reopened file pointer.
+ * The `updateSongListFilePathInUserDataFile` function prompts the user to select a new CSV file for the song list
+ * using `openCSVFileDialog`. The selected path is then stored in the global variable `fullSongListFilePath`, and the
+ * updated user data is written into the user data file using `writeUserDataIntoUserDataFile`. A success message is
+ * displayed, and the program pauses before returning.
  */
-FILE *reopenFile(FILE *file,const String filePath, const String mode);
+void updateSongListFilePathInUserDataFile();
 
 /**
- * @brief Selects the song data file for reading and writing.
+ * @brief Updates the music folder path in the user data file.
  *
- * The `selectSongDataFile` function checks if the song data file specified by
- * the global variable `fullSongListFilePath` already exists. If the file does not exist,
- * it creates the file and returns the file pointer with the specified mode.
- * If the file already exists, it simply returns the file pointer with the specified mode.
- * The function updates the `songFileLoaded` bool accordingly.
- *
- * @param mode The mode to be used for opening the file (e.g., "r", "w", "a", etc.).
- * @param songFileLoaded A pointer to a bool indicating whether the song file is loaded.
- * @return The file pointer for the selected song data file.
+ * The `updateMusicFolderPathInUserDataFile` function prompts the user to select a new folder for the music files
+ * using `openFolderDialog`. The selected path is then stored in the global variable `fullMusicFolderFilePath`, and the
+ * updated user data is written into the user data file using `writeUserDataIntoUserDataFile`. A success message is
+ * displayed, and the program pauses before returning.
  */
-FILE *selectSongDataFile(const char *mode, bool *songFileLoaded);
+void updateMusicFolderPathInUserDataFile();
 
 /**
  * @brief Takes user input for song information and returns a TSongInfos structure.
@@ -352,8 +423,52 @@ void removeSong();
  */
 void changeSongInformations();
 
+/**
+ * @brief Adds a music file for a specific song entry.
+ *
+ * The `addMusicFile` function allows the user to associate a music file with an existing song entry.
+ * It prompts the user to enter the name of the song and checks if it exists in the song list. If the
+ * song exists, it constructs a unique file name for the music file based on the artist and song name.
+ * If the song already has a valid music file, the user is informed, and the function returns to the
+ * music menu. If the song doesn't have a valid music file, the user is prompted to select a music file,
+ * which is then copied to the music folder and associated with the song in the song list. The function
+ * updates the song list file with the new information and displays a success message before returning
+ * to the music menu.
+ */
+void addMusicFile();
 
-void changeUserData();
+/**
+ * @brief Adds a music file for a new song entry.
+ *
+ * The `addMusicFileForNewSong` function facilitates the process of adding a music file for a new song
+ * entry. It prompts the user to select a music file, then constructs a unique file name for the music file
+ * based on the artist and song name provided in the `songInfos` parameter. The function copies and renames
+ * the selected music file to the music folder, updates the song file name, and displays a success message.
+ * The final file name is returned, allowing further use if needed.
+ *
+ * @param songInfos The song information structure containing details about the new song.
+ * @return A string containing the final file name of the added music file.
+ */
+String addMusicFileForNewSong(const TSongInfos songInfos);
+
+
+void removeMusicFile();
+
+
+void changeMusicFile();
+
+
+void playMusic();
+
+/**
+ * @brief Displays the music menu and handles user interaction.
+ *
+ * The `displayMusicMenu` function presents the user with a menu of music-related options, such as adding,
+ * removing, changing, or playing music files. It continuously listens for user input and responds accordingly.
+ * The selected option triggers the corresponding function, and the menu is displayed until the user exits
+ * or selects the appropriate action.
+ */
+void displayMusicMenu();
 
 /**
  * @brief Prints a formatted parting line for better visual separation.
@@ -669,14 +784,6 @@ void displayListedSongsWithAGivenRating();
 void exitProgramm(const int returnValue);
 
 /**
- * @brief Clears the input buffer by consuming any remaining characters.
- *
- * The `clearInputBuffer` function reads characters from the standard input until a newline
- * or the end of the file is encountered, effectively clearing the input buffer.
- */
-void clearInputBuffer();
-
-/**
  * @brief Replaces occurrences of a character in a string.
  *
  * The `charReplace` function replaces all occurrences of the specified 'old' character
@@ -704,18 +811,6 @@ void charReplace(const char old, const char new, char *haystack, const int maxLe
 char *mergeStr(const char *str1, const char *str2);
 
 /**
- * @brief Compares two strings for equality.
- *
- * The `strCmp` function compares two input strings `str1` and `str2` character by character
- * and returns TRUE if they are equal, and FALSE otherwise.
- *
- * @param str1 The first string to be compared.
- * @param str2 The second string to be compared.
- * @return TRUE if the strings are equal, FALSE otherwise.
- */
-bool strCmp(const char *str1, const char *str2);
-
-/**
  * @brief Compares two strings for equality, ignoring case.
  *
  * The `strCmpIgnoreCase` function compares two input strings `str1` and `str2` character by character,
@@ -725,7 +820,7 @@ bool strCmp(const char *str1, const char *str2);
  * @param str2 The second string to be compared.
  * @return TRUE if the strings are equal, ignoring case; FALSE otherwise.
  */
-bool strCmpIgnoreCase(const char *str1, const char *str2);
+Boolean strCmpIgnoreCase(const char *str1, const char *str2);
 
 /**
  * @brief Allocates memory for a TSongInfos structure.
@@ -748,8 +843,51 @@ TSongInfos allocateSongInfos();
  */
 void setIndexCount();
 
+/**
+ * @brief Retrieves the full path of the executable's directory.
+ *
+ * The `getExecutablePath` function dynamically allocates memory to store the full path of the directory
+ * where the executable is located. It uses the `GetModuleFileName` function to obtain the full path
+ * and then removes the filename to keep only the directory. The allocated buffer containing the path
+ * is returned, and the caller is responsible for freeing the memory.
+ *
+ * @return A dynamically allocated string containing the full path of the executable's directory,
+ *         or NULL in case of memory allocation failure or if the path retrieval fails.
+ */
+String getExecutablePath();
 
-String setWorkingDirectoryToExecutablePath();
+/**
+ * @brief Checks if a file exists at the specified full path.
+ *
+ * The `fileExists` function attempts to open the file at the given `fullFilePath` in binary mode.
+ * If the file can be opened, it is assumed to exist, and the function returns TRUE. Otherwise, it
+ * returns FALSE. The caller is responsible for providing a valid full file path.
+ *
+ * @param fullFilePath A string containing the full path of the file to check for existence.
+ * @return TRUE if the file exists, FALSE otherwise.
+ */
+Boolean fileExists(const String fullFilePath);
+
+/**
+ * @brief Converts spaces and specified special characters in a string to underscores.
+ *
+ * The `convertSpacesAndSpecialCharsToUnderscores` function iterates through each character in the
+ * provided string (`str`) and replaces spaces, forward slashes, backslashes, and pipe characters with underscores.
+ * The function modifies the input string in place.
+ *
+ * @param str A pointer to the null-terminated string to be modified.
+ */
+void convertSpacesAndSpecialCharsToUnderscores(char* str);
+
+/**
+ * @brief Converts all characters in a string to lowercase.
+ *
+ * The `convertToLowerCase` function iterates through each character in the provided string (`str`)
+ * and converts it to lowercase using the `tolower` function. The function modifies the input string in place.
+ *
+ * @param str A pointer to the null-terminated string to be converted to lowercase.
+ */
+void convertToLowerCase(char* str);
 
 /**
  * @brief Compares two songs based on their names.
@@ -855,20 +993,6 @@ int compareSongsBest2Worse(const void *a, const void *b);
  * @param songInfos The `TSongInfos` structure to be freed.
  */
 void freeSongInfos(const TSongInfos songInfos);
-
-
-/**
- * @brief Returns the maximum of two integers.
- *
- * The `max` function compares two integers and returns the greater of the two.
- *
- * @param a The first integer.
- * @param b The second integer.
- * @return The maximum of the two integers.
- */
- /*
-int max(const int a, const int b);
-*/
 
 /**
  * @brief Frees allocated memory and performs cleanup before program exit.

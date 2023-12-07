@@ -1,37 +1,38 @@
+#include "songs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <conio.h>
 #include <signal.h>
-#include "songs.h"
 #include <windows.h>
 #include <shlobj.h>
 #include <shlwapi.h>
+#include <vlc/vlc.h>
 
 int indexCount = 0;
 String fullSongListFilePath = NULL;
 String fullMusicFolderFilePath = NULL;
 String fullUserDataFilePath = NULL;
-UserData userData = {NULL, NULL, 0};
 
 void Main()
 {
     signal(SIGINT, exitHandler); // SIGINT is triggered, for example, by Ctrl+C
     signal(SIGTERM, exitHandler); // SIGTERM is triggered, for example, when exiting by the X in the top right
 
+    setIndexCount();
+
     fullSongListFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
     fullMusicFolderFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
     fullUserDataFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
-    const TSongInfos songInfos = {0, NULL, NULL, NULL, NULL, 0};
 
     checkAndHandleUserDataFile();
     checkAndHandleMusicFileFolder();
 
-    MainMenu(songInfos);
+    MainMenu();
 }
 
-void MainMenu(const TSongInfos songInfos)
+void MainMenu()
 {
     int option;
     int selectedOption = 1;
@@ -49,11 +50,11 @@ void MainMenu(const TSongInfos songInfos)
             option = getch();
             if (option == 72)
             {
-                selectedOption = (selectedOption == 1) ? 6 : selectedOption - 1;
+                selectedOption = (selectedOption == 1) ? 7 : selectedOption - 1;
             }
             else if (option == 80)
             {
-                selectedOption = (selectedOption == 6) ? 1 : selectedOption + 1;
+                selectedOption = (selectedOption == 7) ? 1 : selectedOption + 1;
             }
         }
         else if (option == 13)
@@ -66,29 +67,26 @@ void MainMenu(const TSongInfos songInfos)
     {
     case 1:
         addNewSong();
-        usleep(500000);
-        MainMenu(songInfos);
+            MainMenu();
         break;
     case 2:
         removeSong();
-        usleep(1000000);
-        MainMenu(songInfos);
+            MainMenu();
         break;
     case 3:
         changeSongInformations();
-        usleep(500000);
-        MainMenu(songInfos);
+            MainMenu();
         break;
     case 4:
         displayListedSongs();
-        usleep(500000);
-        MainMenu(songInfos);
         break;
     case 5:
-
+        displayMusicMenu();
         break;
     case 6:
-        freeSongInfos(songInfos);
+        updateUserData();
+        break;
+    case 7:
         exitProgramm(0);
     default:
         break;
@@ -120,8 +118,9 @@ void printMenuOptions(const int selectedOption)
     printf("%s  Delete a Song from song List\n", (selectedOption == 2) ? ">>" : "  ");
     printf("%s  Change Song Informations in Song List\n", (selectedOption == 3) ? ">>" : "  ");
     printf("%s  List Songs\n", (selectedOption == 4) ? ">>" : "  ");
-    printf("%s  Change UserData\n", (selectedOption == 5) ? ">>" : "  ");
-    printf("%s  Exit\n\n", (selectedOption == 6) ? ">>" : "  ");
+    printf("%s  Music\n", (selectedOption == 5) ? ">>" : "  ");
+    printf("%s  Change UserData\n", (selectedOption == 6) ? ">>" : "  ");
+    printf("%s  Exit\n\n", (selectedOption == 7) ? ">>" : "  ");
 }
 
 void printListOptions(const int selectedOption)
@@ -130,6 +129,16 @@ void printListOptions(const int selectedOption)
     printf("%s  List\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List Sorted\n", (selectedOption == 2) ? ">>" : "  ");
     printf("%s  Back To Main Menu\n", (selectedOption == 3) ? ">>" : "  ");
+}
+
+void printMusicOptions(const int selectedOption)
+{
+    printf("Chose a Option:\n");
+    printf("%s  Add Music File for a Song\n", (selectedOption == 1) ? ">>" : "  ");
+    printf("%s  Remove Music File for a Song\n", (selectedOption == 2) ? ">>" : "  ");
+    printf("%s  Change Music File for a Song\n", (selectedOption == 3) ? ">>" : "  ");
+    printf("%s  Play a Song\n", (selectedOption == 4) ? ">>" : "  ");
+    printf("%s  Back To Main Menu\n", (selectedOption == 5) ? ">>" : "  ");
 }
 
 void printChangeUserDataOptions(const int selectedOption)
@@ -224,6 +233,30 @@ String openCSVFileDialog()
     }
 }
 
+String openMusicFileDialog() {
+    static char filePath[MAX_PATH];
+
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(ofn));
+
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = NULL;
+    ofn.lpstrFile = filePath;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.lpstrFilter = "Media Files\0*.mp3;*.mp4\0All Files\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = NULL;
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+    if (GetOpenFileName(&ofn) == TRUE) {
+        return filePath;
+    } else {
+        return NULL;
+    }
+}
+
 String openFolderDialog()
 {
     static char folderPath[MAX_PATH];
@@ -250,9 +283,21 @@ String openFolderDialog()
     }
 }
 
+void copyAndRenameMusicFile(const char* srcPath, const char* destFolder, const char* newFileName)
+{
+    String destPath = (String)malloc(MAX_STR_LEN * sizeof(char));
+    snprintf(destPath, MAX_STR_LEN, "%s\\%s", destFolder, newFileName);
+
+    if (CopyFile(srcPath, destPath, FALSE) == 0) {
+        printf("\n\nError copying file. Error code: %lu\n", GetLastError());
+    }
+
+    free(destPath);  // Don't forget to free the allocated memory
+}
+
 void checkAndHandleUserDataFile()
 {
-    fullUserDataFilePath = mergeStr(setWorkingDirectoryToExecutablePath(), USERDATA_FILE_NAME);
+    fullUserDataFilePath = mergeStr(getExecutablePath(), USERDATA_FILE_NAME);
 
     FILE* file = fopen(fullUserDataFilePath, "rt");
 
@@ -301,7 +346,6 @@ void setUserData()
 {
     fullSongListFilePath = openCSVFileDialog();
     fullMusicFolderFilePath = openFolderDialog();
-    setIndexCount();
 }
 
 void writeUserDataIntoUserDataFile()
@@ -313,7 +357,7 @@ void writeUserDataIntoUserDataFile()
         exit(1);
     }
 
-    fprintf(file, "%s;%s;%d", fullSongListFilePath, fullMusicFolderFilePath, indexCount);
+    fprintf(file, "%s;%s", fullSongListFilePath, fullMusicFolderFilePath);
 
     fclose(file);
 }
@@ -327,346 +371,14 @@ void readUserDataFromUserDataFile()
         exit(1);
     }
 
-    fscanf(file, "%[^;];%[^;];%d", fullSongListFilePath, fullMusicFolderFilePath, &indexCount);
+    fscanf(file, "%[^;];%[^;]", fullSongListFilePath, fullMusicFolderFilePath);
 
     fclose(file);
 }
 
-FILE* openFile(const String filePath, const String mode)
+void updateUserData()
 {
-    return fopen(filePath, mode);
-}
-
-FILE* reopenFile(FILE* file, const String filePath, const String mode)
-{
-    fclose(file);
-    return fopen(filePath, mode);
-}
-
-FILE* selectSongDataFile(const char* mode, bool* songFileLoaded)
-{
-    FILE* file = NULL;
-
-    // Check if File alredy exists
-    if (access(fullSongListFilePath, F_OK) == -1)
-    {
-        // File doesn not alredy exist, so create it
-        file = fopen(fullSongListFilePath, "w+");
-        if (file == NULL)
-        {
-            perror("Error creating file");
-            *songFileLoaded = FALSE;
-            exit(1);
-        }
-        *songFileLoaded = TRUE;
-        fclose(file);
-        return fopen(fullSongListFilePath, mode);
-    }
-
-    *songFileLoaded = TRUE;
-
-    return fopen(fullSongListFilePath, mode);
-}
-
-TSongInfos inputSongInfos()
-{
-    TSongInfos songInfos = allocateSongInfos();
-
-    printf("Input the needes Informations from the Song\n");
-
-    songInfos.index = indexCount;
-
-    printf("Name:");
-    clearInputBuffer();
-    fgets(songInfos.name, MAX_STR_LEN, stdin);
-    charReplace('\n', '\0', songInfos.name, MAX_STR_LEN);
-
-    printf("Album:");
-    fgets(songInfos.album, MAX_STR_LEN, stdin);
-    charReplace('\n', '\0', songInfos.album, MAX_STR_LEN);
-
-    printf("Artist:");
-    fgets(songInfos.artist, MAX_STR_LEN, stdin);
-    charReplace('\n', '\0', songInfos.artist, MAX_STR_LEN);
-
-    printf("Genre:");
-    fgets(songInfos.genre, MAX_STR_LEN, stdin);
-    charReplace('\n', '\0', songInfos.genre, MAX_STR_LEN);
-
-    printf("Year Published:");
-    scanf("%hd", &songInfos.yearPublished);
-
-    do
-    {
-        printf("Your Rating (1-5):");
-        scanf("%hd", &songInfos.rating);
-    }
-    while (!(songInfos.rating >= 1 && songInfos.rating <= 5));
-
-    return songInfos;
-}
-
-void addNewSong()
-{
-    FILE* file = NULL;
-
-    // Open File to Attach
-    file = fopen(fullSongListFilePath, "at");
-    if (file == NULL)
-    {
-        perror("Error when opening the file");
-        exit(1);
-    }
-
-    fseek(file, 0, SEEK_END);
-
-    // Check if file already has valid entries
-    if (ftell(file) == 0)
-    {
-        indexCount = 0;
-    }
-    else
-    {
-        fseek(file, -1, SEEK_CUR);
-
-        char c;
-        while ((c = fgetc(file)) != '\n' && ftell(file) > 1)
-        {
-            fseek(file, -2, SEEK_CUR);
-        }
-    }
-
-    fseek(file, 0, SEEK_END);
-
-    const TSongInfos songInfos = inputSongInfos();
-
-    // Write the data to the end of the file
-    if (fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", indexCount, songInfos.name, songInfos.album, songInfos.artist,
-                songInfos.genre, songInfos.yearPublished, songInfos.rating) < 0)
-    {
-        perror("Error writing to file");
-        exit(1);
-    }
-
-    fclose(file);
-
-    indexCount++;
-
-    // Free Memory
-    freeSongInfos(songInfos);
-
-    printf("\n\nSong Added successfully ");
-    for (int i = 0; i < 3; i++)
-    {
-        usleep(500000);
-        printf(".");
-    }
-}
-
-void removeSong()
-{
-    FILE* file = NULL;
-
-    int index;
-
-    printf("Input the Index of the Entry you want to delete.\n"
-        "To display your Song List inclusive the Index of every Song, Type \"-1\"\n\n");
-    scanf("%d", &index);
-    if (index < 0)
-    {
-        displayListedSongsStatic(file);
-        do
-        {
-            printf("\nIndex of which song you wanna remove from the list:");
-            scanf("%d", &index);
-        }
-        while (index < 0);
-    }
-
-    TSongInfos songs[indexCount];
-
-    for (int i = 0; i < indexCount; i++)
-    {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
-    }
-
-    // Open File to Read
-    file = fopen(fullSongListFilePath, "rt");
-    if (file == NULL)
-    {
-        perror("Error when opening the file");
-        exit(1);
-    }
-
-    int i = 0;
-    while (!feof(file))
-    {
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating));
-        i++;
-    }
-    fclose(file);
-
-    // Check if given Index is Valid
-    if (index < 0 || index >= i)
-    {
-        printf("Invalid Index\n");
-        return;
-    }
-
-    // Open File to Write
-    file = fopen("../SongList.csv", "wt");
-    if (file == NULL)
-    {
-        perror("Error when opening the file");
-        exit(1);
-    }
-
-    // Write Song List back to File but skip the one to be deleted
-    for (int j = 0; j < i; j++)
-    {
-        if (j != index)
-        {
-            if (j < index)
-            {
-                fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", songs[j].index,
-                        songs[j].name, songs[j].album, songs[j].artist,
-                        songs[j].genre, songs[j].yearPublished, songs[j].rating);
-            }
-            else
-            {
-                fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", songs[j].index - 1,
-                        songs[j].name, songs[j].album, songs[j].artist,
-                        songs[j].genre, songs[j].yearPublished, songs[j].rating);
-            }
-        }
-    }
-
-    fclose(file);
-
-    for (int j = 0; j < indexCount; j++)
-    {
-        freeSongInfos(songs[j]);
-    }
-
-    indexCount--;
-
-    printf("\n\nSong Removed successfully ");
-    for (int j = 0; j < 3; j++)
-    {
-        usleep(500000);
-        printf(".");
-    }
-}
-
-void changeSongInformations()
-{
-    FILE* file = NULL;
-
-    int index;
-
-    printf("Input the Index of the Entrie you wanna edit.\n"
-        "To display your Song List inclusive the Index of every Song, Type \"-1\"\n\n");
-    scanf("%d", &index);
-    if (index < 0)
-    {
-        displayListedSongsStatic();
-        do
-        {
-            printf("Index of which song you wanna change the Informtion of:");
-            scanf("%d", &index);
-        }
-        while (index < 0);
-    }
-
-    printf("\nEnter new Song Informations:");
-
-    TSongInfos songInfos = inputSongInfos();
-
-    TSongInfos songs[indexCount];
-
-    for (int i = 0; i < indexCount; i++)
-    {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
-    }
-
-    // Open File to Read
-    file = fopen(fullSongListFilePath, "rt");
-    if (file == NULL)
-    {
-        perror("Error when opening the file");
-        exit(1);
-    }
-
-    int i = 0;
-    while (!feof(file))
-    {
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating));
-        i++;
-    }
-    fclose(file);
-
-    // Check if given Index is Valid
-    if (index < 0 || index >= i)
-    {
-        printf("Invalid Index\n");
-        return;
-    }
-
-    // Open File to Write
-    file = fopen("../SongList.csv", "wt");
-    if (file == NULL)
-    {
-        perror("Error when opening the file");
-        exit(1);
-    }
-
-    // Write Song List back to File but write the new Song Informations for the given entrie Index
-    for (int j = 0; j < i; j++)
-    {
-        if (j != index)
-        {
-            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", songs[j].index,
-                    songs[j].name, songs[j].album, songs[j].artist,
-                    songs[j].genre, songs[j].yearPublished, songs[j].rating);
-        }
-        else
-        {
-            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd\n", index,
-                    songInfos.name, songInfos.album, songInfos.artist,
-                    songInfos.genre, songInfos.yearPublished, songInfos.rating);
-        }
-    }
-
-    fclose(file);
-
-    for (int j = 0; j < indexCount; j++)
-    {
-        freeSongInfos(songs[j]);
-    }
-
-    printf("\n\nSong Informations Changed successfully ");
-    for (int j = 0; j < 3; j++)
-    {
-        usleep(500000);
-        printf(".");
-    }
-}
-
-void changeUserData()
-{
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -700,48 +412,655 @@ void changeUserData()
     switch (selectedOption)
     {
     case 1:
-        fullSongListFilePath = openCSVFileDialog();
-        writeUserDataIntoUserDataFile();
-        changeUserData();
+        updateSongListFilePathInUserDataFile();
+        updateUserData();
         break;
     case 2:
-        fullMusicFolderFilePath = openFolderDialog();
-        writeUserDataIntoUserDataFile();
-        changeUserData();
+        updateMusicFolderPathInUserDataFile();
+        updateUserData();
         break;
     case 3:
+        MainMenu();
         break;
     default:
         break;
     }
 }
 
+void updateSongListFilePathInUserDataFile()
+{
+    fullSongListFilePath = openCSVFileDialog();
+    writeUserDataIntoUserDataFile();
+    system("cls");
+    printf("Succesfully Updated SongList File Path\n\n");
+    system("pause");
+}
+
+
+void updateMusicFolderPathInUserDataFile()
+{
+    fullMusicFolderFilePath = openFolderDialog();
+    writeUserDataIntoUserDataFile();
+    system("cls");
+    printf("Succesfully Updated Music Folder Path\n\n");
+    system("pause");
+}
+
+TSongInfos inputSongInfos()
+{
+    TSongInfos songInfos = allocateSongInfos();
+
+
+    printf("Input the needes Informations from the Song\n");
+
+    songInfos.index = (short)indexCount;
+
+    printf("Name:");
+    fflush(stdin);
+    fgets(songInfos.name, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songInfos.name, MAX_STR_LEN);
+
+    printf("Album:");
+    fgets(songInfos.album, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songInfos.album, MAX_STR_LEN);
+
+    printf("Artist:");
+    fgets(songInfos.artist, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songInfos.artist, MAX_STR_LEN);
+
+    printf("Genre:");
+    fgets(songInfos.genre, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songInfos.genre, MAX_STR_LEN);
+
+    printf("Year Published:");
+    scanf("%hd", &songInfos.yearPublished);
+
+    do
+    {
+        printf("Your Rating (1-5):");
+        scanf("%hd", &songInfos.rating);
+    }
+    while (!(songInfos.rating >= 1 && songInfos.rating <= 5));
+
+    printf("Do you want to add a Music File for the Song (y|n): ");
+    fflush(stdin);
+    songInfos.musicFile = getchar() == 'y' ? TRUE : FALSE;
+    if (songInfos.musicFile)
+    {
+        songInfos.musicFileName = addMusicFileForNewSong(songInfos);
+    }
+
+    return songInfos;
+}
+
+void addNewSong()
+{
+    system("cls");
+
+    FILE* file = NULL;
+
+    // Open File to Attach
+    file = fopen(fullSongListFilePath, "at");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    fseek(file, 0, SEEK_END);
+
+    // Check if file already has valid entries
+    if (ftell(file) == 0)
+    {
+        indexCount = 0;
+    }
+    else
+    {
+        fseek(file, -1, SEEK_CUR);
+
+        char c;
+        while ((c = fgetc(file)) != '\n' && ftell(file) > 1)
+        {
+            fseek(file, -2, SEEK_CUR);
+        }
+    }
+
+    fseek(file, 0, SEEK_END);
+
+    const TSongInfos songInfos = inputSongInfos();
+
+    // Write the data to the end of the file
+    if (fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", indexCount, songInfos.name, songInfos.album, songInfos.artist,
+                songInfos.genre, songInfos.yearPublished, songInfos.rating, (songInfos.musicFile == TRUE) ? songInfos.musicFileName : "none") < 0)
+    {
+        perror("Error writing to file");
+        exit(1);
+    }
+
+    fclose(file);
+
+    indexCount++;
+
+    // Free Memory
+    freeSongInfos(songInfos);
+
+    printf("\n\nSong Added successfully\n\n");
+    system("pause");
+}
+
+void removeSong()
+{
+    system("cls");
+
+    FILE* file = NULL;
+    String songName = (String)malloc(MAX_STR_LEN * sizeof(String));
+
+    TSongInfos songs[indexCount];
+
+    for (int i = 0; i < indexCount; i++)
+    {
+        songs[i] = allocateSongInfos();
+    }
+
+    // Open File to Read
+    file = fopen(fullSongListFilePath, "rt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    int i = 0;
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
+    {
+        i++;
+    }
+    fclose(file);
+
+    printf("Enter The Song you want to delete: ");
+    fflush(stdin);
+    fgets(songName, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songName, MAX_STR_LEN);
+
+    // Check if the song exists in the list
+    int songIndex;
+    Boolean songExists = FALSE;
+    for (int j = 0; j < i; j++) {
+        if (strCmpIgnoreCase(songs[j].name, songName)) {
+            songExists = TRUE;
+            songIndex = j;
+            break;
+        }
+    }
+
+    if (!songExists) {
+        printf("\n\nYour entered Song \"%s\" does not exist in your current Song List\n\n", songName);
+        free(songName);
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        MainMenu();
+    }
+
+    // Open File to Write
+    file = fopen(fullSongListFilePath, "wt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    // Write Song List back to File but skip the one to be deleted
+    for (int j = 0; j < i; j++)
+    {
+        if (!strCmpIgnoreCase(songs[j].name, songName))
+        {
+            if (j < songIndex)
+            {
+                fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                        songs[j].name, songs[j].album, songs[j].artist,
+                        songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                        songs[j].musicFileName);
+            }
+            else
+            {
+                fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index - 1,
+                        songs[j].name, songs[j].album, songs[j].artist,
+                        songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                        songs[j].musicFileName);
+            }
+        }
+    }
+
+    fclose(file);
+
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
+    indexCount--;
+
+    printf("\n\nSong Removed successfully\n\n");
+    system("pause");
+}
+
+void changeSongInformations()
+{
+    system("cls");
+
+    FILE* file = NULL;
+    String songName = (String)malloc(MAX_STR_LEN * sizeof(String));
+
+    TSongInfos songs[indexCount];
+
+    for (int i = 0; i < indexCount; i++)
+    {
+        songs[i] = allocateSongInfos();
+    }
+
+    // Open File to Read
+    file = fopen(fullSongListFilePath, "rt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    int i = 0;
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
+    {
+        i++;
+    }
+    fclose(file);
+
+    printf("Enter The Song you want to change the Informations from: ");
+    fflush(stdin);
+    fgets(songName, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songName, MAX_STR_LEN);
+
+    // Check if the song exists in the list
+    int songIndex;
+    Boolean songExists = FALSE;
+    for (int j = 0; j < i; j++) {
+        if (strCmpIgnoreCase(songs[j].name, songName)) {
+            songExists = TRUE;
+            songIndex = j;
+            break;
+        }
+    }
+
+    if (!songExists) {
+        printf("\n\nYour entered Song \"%s\" does not exist in your current Song List\n\n", songName);
+        free(songName);
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        MainMenu();
+    }
+
+    printf("\nEnter new Song Informations:");
+
+    TSongInfos songInfos = inputSongInfos();
+
+    system("cls");
+
+    // Open File to Write
+    file = fopen(fullSongListFilePath, "wt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    // Write Song List back to File but write the new Song Informations for the given entrie Index
+    for (int j = 0; j < i; j++)
+    {
+        if (j != songIndex)
+        {
+            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                    songs[j].name, songs[j].album, songs[j].artist,
+                    songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                    songs[j].musicFileName);
+        }
+        else
+        {
+            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songIndex,
+                    songInfos.name, songInfos.album, songInfos.artist,
+                    songInfos.genre, songInfos.yearPublished, songInfos.rating,
+                    (songInfos.musicFile == TRUE) ? songInfos.musicFileName : "none");
+        }
+    }
+
+    fclose(file);
+
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
+    printf("Song Informations Changed successfully\n\n");
+    system("pause");
+}
+
+void addMusicFile()
+{
+    FILE* file = NULL;
+    TSongInfos songs[indexCount];
+    String songName = (String)malloc(MAX_STR_LEN * sizeof(String));
+    String songFileName = (String)malloc(MAX_STR_LEN * sizeof(String));
+    String musicFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
+
+    for (int i = 0; i < indexCount; i++)
+    {
+        songs[i] = allocateSongInfos();
+    }
+
+    // Open File to Read
+    file = fopen(fullSongListFilePath, "rt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    int i = 0;
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
+    {
+        i++;
+    }
+
+    fclose(file);
+
+    system("cls");
+    printf("Enter the Song Name you wanna add a music file to: ");
+    fflush(stdin);
+    fgets(songName, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songName, MAX_STR_LEN);
+
+    // Check if the song exists in the list
+    int songIndex;
+    Boolean songExists = FALSE;
+    for (int j = 0; j < i; j++) {
+        if (strCmpIgnoreCase(songs[j].name, songName)) {
+            songExists = TRUE;
+            songIndex = j;
+            break;
+        }
+    }
+
+    if (!songExists) {
+        printf("\n\nYour entered Song \"%s\" does not exist in your current Song List\n\n", songName);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        displayMusicMenu();
+    }
+
+    songFileName = mergeStr(mergeStr(songs[songIndex].artist, "__"), songName);
+
+    convertSpacesAndSpecialCharsToUnderscores(songFileName);
+    convertToLowerCase(songFileName);
+
+    songFileName = mergeStr(songFileName, ".mp3");
+
+    // Check if song already has a Valid Music File
+    if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
+    {
+        if (strCmpIgnoreCase(songs[songIndex].musicFileName, "none")) {
+            // Open File to Write
+            file = fopen(fullSongListFilePath, "wt");
+            if (file == NULL)
+            {
+                perror("Error when opening the file");
+                exit(1);
+            }
+            for (int j = 0; j < i; j++) {
+                if (j == songIndex) {
+                    fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                            songs[j].name, songs[j].album, songs[j].artist,
+                            songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                            songFileName);
+                } else {
+                    fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                            songs[j].name, songs[j].album, songs[j].artist,
+                            songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                            songs[j].musicFileName);
+                }
+            }
+            fclose(file);
+        }
+        printf("\nThis Song already has a Valid Music File.\nYou can change it via the Change Option in the Menu\n\n");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        displayMusicMenu();
+    }
+
+    usleep(500000);
+
+    printf("\n\nSelect the SongFile for your entered Song \"%s\"\n", songName);
+
+    usleep(500000);
+
+    musicFilePath = openMusicFileDialog();
+
+    copyAndRenameMusicFile(musicFilePath, fullMusicFolderFilePath, songFileName);
+
+    // Open File to Write
+    file = fopen(fullSongListFilePath, "wt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    // Write Song List back to File but write the new Song Informations for the given entrie Index
+    for (int j = 0; j < i; j++)
+    {
+        if (strCmpIgnoreCase(songs[j].name, songName))
+        {
+            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                    songs[j].name, songs[j].album, songs[j].artist,
+                    songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                    songFileName);
+        }
+        else
+        {
+            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                    songs[j].name, songs[j].album, songs[j].artist,
+                    songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                    songs[j].musicFileName);
+        }
+    }
+
+    fclose(file);
+
+    usleep(500000);
+
+    printf("\n\nSuccessfully added Music File for Song \"%s\"\n\n", songName);
+
+    // Release of allocated memory
+    free(songName);
+    free(songFileName);
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
+    system("pause");
+}
+
+String addMusicFileForNewSong(const TSongInfos songInfos)
+{
+    String songFileName = (String)malloc(MAX_STR_LEN * sizeof(String));
+    String musicFilePath = (String)malloc(MAX_STR_LEN * sizeof(String));
+
+    usleep(500000);
+
+    printf("\n\nSelect the SongFile for your entered Song \"%s\"\n", songInfos.name);
+
+    usleep(500000);
+
+    musicFilePath = openMusicFileDialog();
+
+    songFileName = mergeStr(songInfos.artist, "__");
+
+    songFileName = mergeStr(songFileName, songInfos.name);
+
+    convertSpacesAndSpecialCharsToUnderscores(songFileName);
+    convertToLowerCase(songFileName);
+
+    songFileName = mergeStr(songFileName, ".mp3");
+
+    copyAndRenameMusicFile(musicFilePath, fullMusicFolderFilePath, songFileName);
+
+    usleep(500000);
+
+    printf("\n\nSuccessfully added Music File for Song \"%s\"\n\n", songInfos.name);
+
+    system("pause");
+
+    return songFileName;
+}
+
+void removeMusicFile()
+{
+
+
+
+    printf("\n\n");
+    system("pause");
+}
+
+
+void changeMusicFile()
+{
+
+
+
+    printf("\n\n");
+    system("pause");
+}
+
+
+void playMusic()
+{
+
+
+
+    printf("\n\n");
+    system("pause");
+}
+
+void displayMusicMenu()
+{
+    fflush(stdin);
+
+    int option;
+    int selectedOption = 1;
+
+    while (TRUE)
+    {
+        system("cls");
+        printListOptionsTitelScreen();
+        printMusicOptions(selectedOption);
+
+        option = getch();
+        if (option == 224)
+        {
+            // Arrow key detected
+            option = getch();
+            if (option == 72)
+            {
+                selectedOption = (selectedOption == 1) ? 5 : selectedOption - 1;
+            }
+            else if (option == 80)
+            {
+                selectedOption = (selectedOption == 5) ? 1 : selectedOption + 1;
+            }
+        }
+        else if (option == 13)
+        {
+            break;
+        }
+    }
+
+    switch (selectedOption)
+    {
+        case 1:
+            addMusicFile();
+            displayMusicMenu();
+            break;
+        case 2:
+            removeMusicFile();
+            displayMusicMenu();
+            break;
+        case 3:
+            changeMusicFile();
+            displayMusicMenu();
+            break;
+        case 4:
+            playMusic();
+            displayMusicMenu();
+            break;
+        case 5:
+            MainMenu();
+            break;
+        default:
+            break;
+    }
+}
+
 void printPartingLine()
 {
-    printf("|%5s|%32s|%21s|%21s|%50s|%5s|%7s|\n",
+    printf("|%5s|%32s|%21s|%21s|%30s|%5s|%7s|%-20s|\n",
            "-------", "----------------------------------", "---------------------------------------",
            "----------------------",
-           "----------------------------------------------------", "------", "--------");
+           "------------------------------", "------", "--------", "--------------------");
 }
 
 void printTableHeader()
 {
     system("cls");
     printPartingLine();
-    printf("| %-5s | %-32s | %-37s | %-20s | %-50s | %-4s | %-6s |\n",
-           "Index", "Name", "Album", "Artist", "Genre", "Year", "Rating");
+    printf("| %-5s | %-32s | %-37s | %-20s | %-28s | %-4s | %-6s | %-18s |\n",
+           "Index", "Name", "Album", "Artist", "Genre", "Year", "Rating", "Music File");
     printPartingLine();
 }
 
 void printTableRow(const TSongInfos song)
 {
-    printf("| %-5hd | %-32s | %-37s | %-20s | %-50s | %-4hd | %-6hd |\n",
-           song.index, song.name, song.album, song.artist, song.genre, song.yearPublished, song.rating);
+    printf("| %-5hd | %-32s | %-37s | %-20s | %-28s | %-4hd | %-6hd | %-18s |\n",
+           song.index, song.name, song.album, song.artist, song.genre, song.yearPublished, song.rating, song.musicFileName);
 }
 
 void displayListedSongs()
 {
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -780,9 +1099,9 @@ void displayListedSongs()
         break;
     case 2:
         displayListedSongsSorted();
-        displayListedSongs();
         break;
     case 3:
+        MainMenu();
         break;
     default:
         break;
@@ -796,10 +1115,7 @@ void displayListedSongsStatic()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -810,13 +1126,13 @@ void displayListedSongsStatic()
         exit(1);
     }
 
+
     int i = 0;
-    while (i < indexCount)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating));
         i++;
     }
 
@@ -830,13 +1146,19 @@ void displayListedSongsStatic()
         printPartingLine();
     }
 
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
     printf("\n\n");
     system("pause");
 }
 
 void displayListedSongsSorted()
 {
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -871,15 +1193,12 @@ void displayListedSongsSorted()
     {
     case 1:
         displayListedSongsSortedByName();
-        displayListedSongsSorted();
         break;
     case 2:
         displayListedSongsSortedByAlbum();
-        displayListedSongsSorted();
         break;
     case 3:
         displayListedSongsSortedByArtist();
-        displayListedSongsSorted();
         break;
     case 4:
         displayListedSongsByGenre();
@@ -887,13 +1206,12 @@ void displayListedSongsSorted()
         break;
     case 5:
         displayListedSongsByYearOfPublishing();
-        displayListedSongsSorted();
         break;
     case 6:
         displayListedSongsByRating();
-        displayListedSongsSorted();
         break;
     case 7:
+        displayListedSongs();
         break;
     default:
         break;
@@ -902,7 +1220,7 @@ void displayListedSongsSorted()
 
 void displayListedSongsSortedByName()
 {
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -943,8 +1261,9 @@ void displayListedSongsSortedByName()
         displayListedSongInfosFromAGivenSong();
         displayListedSongsSortedByName();
         break;
-    case 3:
-        break;
+        case 3:
+            displayListedSongsSorted();
+            break;
     default:
         break;
     }
@@ -958,10 +1277,7 @@ void displayListedSongsSortedByNameA2Z()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -971,12 +1287,12 @@ void displayListedSongsSortedByNameA2Z()
         perror("Error when opening the file");
         exit(1);
     }
+
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -997,10 +1313,7 @@ void displayListedSongsSortedByNameA2Z()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     printf("\n\n");
@@ -1017,10 +1330,7 @@ void displayListedSongInfosFromAGivenSong()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1032,10 +1342,10 @@ void displayListedSongInfosFromAGivenSong()
     }
 
     int i = 0;
-    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                                    &(songs[i].index), songs[i].name, songs[i].album,
-                                    songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                                    &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1069,13 +1379,19 @@ void displayListedSongInfosFromAGivenSong()
     // Free the dynamically allocated memory for searchAlbum
     free(searchSong);
 
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
     printf("\n\n");
     system("pause");
 }
 
 void displayListedSongsSortedByAlbum()
 {
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -1117,6 +1433,7 @@ void displayListedSongsSortedByAlbum()
         displayListedSongsSortedByAlbum();
         break;
     case 3:
+        displayListedSongsSorted();
         break;
     default:
         break;
@@ -1130,10 +1447,7 @@ void displayListedSongsSortedByAlbumA2Z()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1145,10 +1459,10 @@ void displayListedSongsSortedByAlbumA2Z()
     }
 
     int i = 0;
-    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                                    &(songs[i].index), songs[i].name, songs[i].album,
-                                    songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                                    &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1167,6 +1481,12 @@ void displayListedSongsSortedByAlbumA2Z()
         printPartingLine();
     }
 
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
     printf("\n\n");
     system("pause");
 }
@@ -1180,10 +1500,7 @@ void displayListedSongsWithAGivenAlbum()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1195,10 +1512,10 @@ void displayListedSongsWithAGivenAlbum()
     }
 
     int i = 0;
-    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                                    &(songs[i].index), songs[i].name, songs[i].album,
-                                    songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                                    &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1232,13 +1549,19 @@ void displayListedSongsWithAGivenAlbum()
     // Free the dynamically allocated memory for searchAlbum
     free(searchAlbum);
 
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
     printf("\n\n");
     system("pause");
 }
 
 void displayListedSongsSortedByArtist()
 {
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -1279,8 +1602,9 @@ void displayListedSongsSortedByArtist()
         displayListedSongsWithAGivenArtist();
         displayListedSongsSortedByArtist();
         break;
-    case 3:
-        break;
+        case 3:
+            displayListedSongsSorted();
+            break;
     default:
         break;
     }
@@ -1293,10 +1617,7 @@ void displayListedSongsSortedByArtistA2Z()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1308,11 +1629,10 @@ void displayListedSongsSortedByArtistA2Z()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1333,10 +1653,7 @@ void displayListedSongsSortedByArtistA2Z()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     printf("\n\n");
@@ -1352,10 +1669,7 @@ void displayListedSongsWithAGivenArtist()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1367,10 +1681,10 @@ void displayListedSongsWithAGivenArtist()
     }
 
     int i = 0;
-    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-                                    &(songs[i].index), songs[i].name, songs[i].album,
-                                    songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-                                    &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1403,6 +1717,12 @@ void displayListedSongsWithAGivenArtist()
 
     // Free the dynamically allocated memory for searchAlbum
     free(searchArtist);
+
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
 
     printf("\n\n");
     system("pause");
@@ -1448,10 +1768,10 @@ void displayListedSongsByGenre()
     // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        for (int j = 0; i < indexCount; i++)
+        {
+            songs[i] = allocateSongInfos();
+        }
 
         if (songs[i].name == NULL || songs[i].album == NULL ||
             songs[i].artist == NULL || songs[i].genre == NULL)
@@ -1459,12 +1779,10 @@ void displayListedSongsByGenre()
             perror("Memory allocation error");
             free(searchGenre);
 
-            for (int j = 0; j < i; j++)
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
             {
-                free(songs[j].name);
-                free(songs[j].album);
-                free(songs[j].artist);
-                free(songs[j].genre);
+                freeSongInfos(songs[j]);
             }
 
             free(songs);
@@ -1482,11 +1800,10 @@ void displayListedSongsByGenre()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1509,10 +1826,7 @@ void displayListedSongsByGenre()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     free(songs);
@@ -1524,7 +1838,7 @@ void displayListedSongsByGenre()
 
 void displayListedSongsByYearOfPublishing()
 {
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -1577,8 +1891,9 @@ void displayListedSongsByYearOfPublishing()
         displayListedSongsWithAGivenYearOfPublishing();
         displayListedSongsByYearOfPublishing();
         break;
-    case 6:
-        break;
+        case 6:
+            displayListedSongsSorted();
+            break;
     default:
         break;
     }
@@ -1591,12 +1906,8 @@ void displayListedSongsByYearOfPublishingNew2Old()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
-
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
     if (file == NULL)
@@ -1606,11 +1917,10 @@ void displayListedSongsByYearOfPublishingNew2Old()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1631,10 +1941,7 @@ void displayListedSongsByYearOfPublishingNew2Old()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     printf("\n\n");
@@ -1648,10 +1955,7 @@ void displayListedSongsByYearOfPublishingOld2New()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1663,11 +1967,10 @@ void displayListedSongsByYearOfPublishingOld2New()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1688,10 +1991,7 @@ void displayListedSongsByYearOfPublishingOld2New()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     printf("\n\n");
@@ -1708,16 +2008,13 @@ void displayListedSongsNewerThanTheGivenYear()
     // User input for the desired publication year
     printf("Enter the Year:");
     scanf("%d", &givenYear);
-    clearInputBuffer(); // Empty buffer to avoid unwanted characters in the buffer
+    fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
 
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1729,11 +2026,10 @@ void displayListedSongsNewerThanTheGivenYear()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1766,10 +2062,7 @@ void displayListedSongsNewerThanTheGivenYear()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     free(filteredSongs);
@@ -1788,16 +2081,13 @@ void displayListedSongsOlderThanTheGivenYear()
     // User input for the desired publication year
     printf("Enter the Year:");
     scanf("%d", &givenYear);
-    clearInputBuffer(); // Empty buffer to avoid unwanted characters in the buffer
+    fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
 
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1809,11 +2099,10 @@ void displayListedSongsOlderThanTheGivenYear()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1838,10 +2127,7 @@ void displayListedSongsOlderThanTheGivenYear()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     printf("\n\n");
@@ -1858,16 +2144,13 @@ void displayListedSongsWithAGivenYearOfPublishing()
     // User input for the desired publication year
     printf("Enter the Year:");
     scanf("%d", &givenYear);
-    clearInputBuffer(); // Empty buffer to avoid unwanted characters in the buffer
+    fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
 
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1879,11 +2162,10 @@ void displayListedSongsWithAGivenYearOfPublishing()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -1905,10 +2187,7 @@ void displayListedSongsWithAGivenYearOfPublishing()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     printf("\n\n");
@@ -1917,7 +2196,7 @@ void displayListedSongsWithAGivenYearOfPublishing()
 
 void displayListedSongsByRating()
 {
-    clearInputBuffer();
+    fflush(stdin);
 
     int option;
     int selectedOption = 1;
@@ -1962,8 +2241,9 @@ void displayListedSongsByRating()
         displayListedSongsWithAGivenRating();
         displayListedSongsByRating();
         break;
-    case 4:
-        break;
+        case 4:
+            displayListedSongsSorted();
+            break;
     default:
         break;
     }
@@ -1976,10 +2256,7 @@ void displayListedSongsByRatingBest2Worse()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -1991,11 +2268,10 @@ void displayListedSongsByRatingBest2Worse()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -2013,6 +2289,12 @@ void displayListedSongsByRatingBest2Worse()
         printPartingLine();
     }
 
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
     printf("\n\n");
     system("pause");
 }
@@ -2024,10 +2306,7 @@ void displayListedSongsByRatingWorse2Best()
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -2039,11 +2318,10 @@ void displayListedSongsByRatingWorse2Best()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -2061,6 +2339,12 @@ void displayListedSongsByRatingWorse2Best()
         printPartingLine();
     }
 
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
     printf("\n\n");
     system("pause");
 }
@@ -2075,16 +2359,13 @@ void displayListedSongsWithAGivenRating()
     // User input for the desired rating
     printf("Enter the Rating:");
     scanf("%d", &givenRating);
-    clearInputBuffer(); // Empty buffer to avoid unwanted characters in the buffer
+    fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
 
     TSongInfos songs[indexCount];
 
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i].name = malloc(MAX_STR_LEN);
-        songs[i].album = malloc(MAX_STR_LEN);
-        songs[i].artist = malloc(MAX_STR_LEN);
-        songs[i].genre = malloc(MAX_STR_LEN);
+        songs[i] = allocateSongInfos();
     }
 
     // Open File to Read
@@ -2096,11 +2377,10 @@ void displayListedSongsWithAGivenRating()
     }
 
     int i = 0;
-    while (i < indexCount &&
-        fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd\n",
-               &(songs[i].index), songs[i].name, songs[i].album,
-               songs[i].artist, songs[i].genre, &(songs[i].yearPublished),
-               &(songs[i].rating)) == 7)
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
     {
         i++;
     }
@@ -2122,10 +2402,7 @@ void displayListedSongsWithAGivenRating()
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
-        free(songs[j].name);
-        free(songs[j].album);
-        free(songs[j].artist);
-        free(songs[j].genre);
+        freeSongInfos(songs[j]);
     }
 
     printf("\n\n");
@@ -2139,12 +2416,6 @@ void exitProgramm(const int returnValue)
     usleep(1000000);
     system("PAUSE");
     exit(returnValue);
-}
-
-void clearInputBuffer()
-{
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
 }
 
 void charReplace(const char old, const char new, char* haystack, const int maxLength)
@@ -2195,21 +2466,7 @@ char* mergeStr(const char* str1, const char* str2)
     return mergedStr;
 }
 
-bool strCmp(const char* str1, const char* str2)
-{
-    while (*str1 != '\0' && *str2 != '\0')
-    {
-        if (*str1 != *str2)
-        {
-            return FALSE;
-        }
-        str1++;
-        str2++;
-    }
-    return TRUE;
-}
-
-bool strCmpIgnoreCase(const char* str1, const char* str2)
+Boolean strCmpIgnoreCase(const char* str1, const char* str2)
 {
     while (*str1 && *str2)
     {
@@ -2229,7 +2486,10 @@ TSongInfos allocateSongInfos()
         (String)malloc(MAX_STR_LEN * sizeof(String)),
         (String)malloc(MAX_STR_LEN * sizeof(String)),
         (String)malloc(MAX_STR_LEN * sizeof(String)),
-        0
+        0,
+        0,
+        (String)malloc(MAX_STR_LEN * sizeof(String)),
+        FALSE
     };
 
     return songInfos;
@@ -2278,7 +2538,7 @@ void setIndexCount()
     fclose(file);
 }
 
-String setWorkingDirectoryToExecutablePath() {
+String getExecutablePath() {
     // Reserve dynamic memory for the buffer
     char* buffer = (char*)malloc(MAX_PATH);
     if (buffer == NULL) {
@@ -2296,6 +2556,41 @@ String setWorkingDirectoryToExecutablePath() {
 
     // Return dynamic reserved path
     return buffer;
+}
+
+Boolean fileExists(const String fullFilePath)
+{
+    FILE* file = fopen(fullFilePath, "rb");
+    if (file) {
+        fclose(file);
+        return TRUE;  // Datei existiert
+    } else {
+        return FALSE;  // Datei existiert nicht
+    }
+}
+
+void convertSpacesAndSpecialCharsToUnderscores(char* str) {
+    if (str == NULL) {
+        return;  // Handle NULL input
+    }
+
+    while (*str) {
+        if (*str == ' ' || *str == '/' || *str == '\\' || *str == '|') {
+            *str = '_';
+        }
+        str++;
+    }
+}
+
+void convertToLowerCase(char* str) {
+    if (str == NULL) {
+        return;  // Handle NULL input
+    }
+
+    while (*str) {
+        *str = tolower((unsigned char)*str);
+        str++;
+    }
 }
 
 int compareSongsByName(const void* a, const void* b)
@@ -2377,14 +2672,8 @@ void freeSongInfos(const TSongInfos songInfos)
     free(songInfos.album);
     free(songInfos.artist);
     free(songInfos.genre);
+    free(songInfos.musicFileName);
 }
-
-/*
-int max(const int a, const int b)
-{
-    return (a > b) ? a : b;
-}
- */
 
 void exitHandler()
 {

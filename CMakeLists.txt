@@ -4,10 +4,10 @@ project(Projekt2AHITNGr1 C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(
-        Projekt2AHITNGr1
+        SongLister
         main.c
         songs.c
         songs.h
         )
 
-target_link_libraries(Projekt2AHITNGr1 shlwapi)
+target_link_libraries(SongLister shlwapi)
