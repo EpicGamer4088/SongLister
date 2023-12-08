@@ -1135,9 +1135,194 @@ void removeMusicFile()
 
 void changeMusicFile()
 {
+    FILE *file = NULL;
+    TSongInfos songs[indexCount];
+    String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
 
+    for (int i = 0; i < indexCount; i++)
+    {
+        songs[i] = allocateSongInfos();
+    }
 
-    printf("\n\n");
+    // Open File to Read
+    file = fopen(fullSongListFilePath, "rt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    int i = 0;
+    while (i < indexCount && fscanf(file, "%hd;%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    &songs[i].index, songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 8)
+    {
+        i++;
+    }
+
+    fclose(file);
+
+    system("cls");
+    printf("Enter the Song Name you want to change the music file from: ");
+    fflush(stdin);
+    fgets(songName, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songName, MAX_STR_LEN);
+
+    int songIndex;
+    Boolean songExists = FALSE;
+    for (int j = 0; j < i; j++)
+    {
+        if (strCmpIgnoreCase(songs[j].name, songName))
+        {
+            songExists = TRUE;
+            songIndex = j;
+            break;
+        }
+    }
+
+    if (!songExists)
+    {
+        printf("\n\nYour entered Song \"%s\" does not exist in your current Song List\n\n", songName);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        displayMusicMenu();
+    }
+
+    songFileName = mergeStr(mergeStr(songs[songIndex].artist, "__"), songName);
+
+    convertSpacesAndSpecialCharsToUnderscores(songFileName);
+    convertToLowerCase(songFileName);
+
+    songFileName = mergeStr(songFileName, ".mp3");
+
+    if (!fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
+    {
+        if (!strCmpIgnoreCase(songs[songIndex].musicFileName, "none"))
+        {
+            // Open File to Write
+            file = fopen(fullSongListFilePath, "wt");
+            if (file == NULL)
+            {
+                perror("Error when opening the file");
+                exit(1);
+            }
+            for (int j = 0; j < i; j++)
+            {
+                if (j == songIndex)
+                {
+                    fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                            songs[j].name, songs[j].album, songs[j].artist,
+                            songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                            "none");
+                } else
+                {
+                    fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                            songs[j].name, songs[j].album, songs[j].artist,
+                            songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                            songs[j].musicFileName);
+                }
+            }
+            fclose(file);
+        }
+        printf("\nYour entered Song does not have a Valid Music File.\nYou can add one via the Add Option in the Menu\n\n");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        for (int j = 0; j < indexCount; j++) {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        displayMusicMenu();
+    }
+    else if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)) && strCmpIgnoreCase(songs[songIndex].musicFileName, "none"))
+    {
+            // Open File to Write
+            file = fopen(fullSongListFilePath, "wt");
+            if (file == NULL)
+            {
+                perror("Error when opening the file");
+                exit(1);
+            }
+            for (int j = 0; j < i; j++)
+            {
+                if (j == songIndex)
+                {
+                    fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                            songs[j].name, songs[j].album, songs[j].artist,
+                            songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                            songFileName);
+                } else
+                {
+                    fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                            songs[j].name, songs[j].album, songs[j].artist,
+                            songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                            songs[j].musicFileName);
+                }
+            }
+            fclose(file);
+    }
+
+    usleep(500000);
+
+    removeMusicFileFromMusicFolder(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName));
+
+    printf("\n\nSelect the new SongFile for your entered Song \"%s\"\n", songName);
+
+    usleep(500000);
+
+    musicFilePath = openMusicFileDialog();
+
+    copyAndRenameMusicFile(musicFilePath, fullMusicFolderFilePath, songFileName);
+
+    // Open File to Write
+    file = fopen(fullSongListFilePath, "wt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    // Write Song List back to File but write the new Song Informations for the given entrie Index
+    for (int j = 0; j < i; j++)
+    {
+        if (strCmpIgnoreCase(songs[j].name, songName))
+        {
+            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                    songs[j].name, songs[j].album, songs[j].artist,
+                    songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                    songFileName);
+        } else
+        {
+            fprintf(file, "%hd;%s;%s;%s;%s;%hd;%hd;%s\n", songs[j].index,
+                    songs[j].name, songs[j].album, songs[j].artist,
+                    songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                    songs[j].musicFileName);
+        }
+    }
+
+    fclose(file);
+
+    usleep(500000);
+
+    printf("\n\nSuccessfully changed Music File from Song \"%s\"\n\n", songName);
+
+    // Release of allocated memory
+    free(songName);
+    free(songFileName);
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
     system("pause");
 }
 
