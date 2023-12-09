@@ -71,7 +71,6 @@ Boolean;
  * genre, yearPublished, rating, musicFileName, and musicFile, providing a way to store
  * information related to a song. This structure is aliased as `TSongInfos` for convenience.
  *
- * - `index`: Index of the song.
  * - `name`: Name of the song.
  * - `album`: Album containing the song.
  * - `artist`: Artist who performed the song.
@@ -83,7 +82,6 @@ Boolean;
  */
 typedef struct SongInfos
 {
-    short index;            /**< Index of the song. */
     String name;            /**< Name of the song. */
     String album;           /**< Album containing the song. */
     String artist;          /**< Artist who performed the song. */
@@ -100,6 +98,9 @@ void Main();
 
 
 void MainMenu();
+
+
+void checkIfAllMusicFileEntriesAreValid() ;
 
 
 void printTitelScreen();
@@ -222,6 +223,9 @@ void displayListedSongs();
 void displayListedSongsStatic();
 
 
+void displayListedSongsWithValidMusicFile();
+
+
 void displayListedSongsSorted();
 
 
@@ -324,10 +328,7 @@ int compareSongsByAlbum(const void *a, const void *b);
 int compareSongsByArtist(const void *a, const void *b);
 
 
-int compareSongsByYearOfPublishingNew2Old(const void *a, const void *b);
-
-
-int compareSongsByYearOfPublishingOld2New(const void *a, const void *b);
+int compareSongsByYearOfPublishing(const void *a, const void *b);
 
 
 int compareSongsWorse2Best(const void *a, const void *b);
