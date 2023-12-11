@@ -36,6 +36,12 @@
 				"file" : 0,
 				"line" : 13,
 				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 14,
+				"parent" : 0
 			}
 		]
 	},
@@ -80,6 +86,11 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "-lshlwapi",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "-lwinmm",
 				"role" : "libraries"
 			},
 			{

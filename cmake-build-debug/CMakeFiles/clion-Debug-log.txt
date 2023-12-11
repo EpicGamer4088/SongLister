@@ -1,4 +1,10 @@
 H:\Programmieren\JetBrains\CLion\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=H:/Programmieren/JetBrains/CLion/bin/ninja/win/x64/ninja.exe -G Ninja -S "H:\CloudStorage\OneDrive\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister" -B "H:\CloudStorage\OneDrive\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug"
--- Configuring done (0.1s)
--- Generating done (0.1s)
+-- The C compiler identification is GNU 13.1.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: H:/Programmieren/JetBrains/CLion/bin/mingw/bin/gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done (4.6s)
+-- Generating done (0.0s)
 -- Build files have been written to: H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug

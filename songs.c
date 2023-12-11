@@ -697,6 +697,7 @@ void removeSong()
     system("cls");
 
     FILE *file = NULL;
+    int songIndex;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
 
     TSongInfos songs[indexCount];
@@ -730,14 +731,12 @@ void removeSong()
     charReplace('\n', '\0', songName, MAX_STR_LEN);
 
     // Check if the song exists in the list
-    int songIndex;
     Boolean songExists = FALSE;
     for (int j = 0; j < i; j++)
     {
         if (strCmpIgnoreCase(songs[j].name, songName))
         {
             songExists = TRUE;
-            songIndex = j;
             break;
         }
     }
@@ -767,23 +766,21 @@ void removeSong()
     {
         if (!strCmpIgnoreCase(songs[j].name, songName))
         {
-            if (j < songIndex)
-            {
-                fprintf(file, "%s;%s;%s;%s;%hd;%hd;%s\n",
-                        songs[j].name, songs[j].album, songs[j].artist,
-                        songs[j].genre, songs[j].yearPublished, songs[j].rating,
-                        songs[j].musicFileName);
-            } else
-            {
-                fprintf(file, "%s;%s;%s;%s;%hd;%hd;%s\n",
-                        songs[j].name, songs[j].album, songs[j].artist,
-                        songs[j].genre, songs[j].yearPublished, songs[j].rating,
-                        songs[j].musicFileName);
-            }
+
+            fprintf(file, "%s;%s;%s;%s;%hd;%hd;%s\n",
+                    songs[j].name, songs[j].album, songs[j].artist,
+                    songs[j].genre, songs[j].yearPublished, songs[j].rating,
+                    songs[j].musicFileName);
+
+        } else
+        {
+            songIndex = j;
         }
     }
 
     fclose(file);
+
+    removeMusicFileFromMusicFolder(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName));
 
     for (int j = 0; j < indexCount; j++)
     {
@@ -1434,8 +1431,7 @@ void playMusic()
         }
         system("pause");
         displayMusicMenu();
-    }
-    else if (strCmpIgnoreCase(songs[songIndex].musicFileName, "none"))
+    } else if (strCmpIgnoreCase(songs[songIndex].musicFileName, "none"))
     {
         usleep(500000);
         system("cls");
@@ -1466,10 +1462,16 @@ void playMusic()
         switch (option)
         {
             case 32: // Space
-                pauseResumePlayback(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName), &isPlaying);
+                pauseResumePlayback(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName),
+                                    &isPlaying);
                 break;
             case 27: // ESC
-                pauseResumePlayback(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName), &isPlaying);
+                if (isPlaying)
+                {
+                    pauseResumePlayback(
+                            mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName),
+                            &isPlaying);
+                }
                 endPlayback = TRUE;
                 break;
         }
@@ -1488,16 +1490,20 @@ void playMusic()
     system("pause");
 }
 
-void playWaveFile(const char* fullMusicFilePath, Boolean* isPlaying) {
+void playWaveFile(const char *fullMusicFilePath, Boolean *isPlaying)
+{
     *isPlaying = TRUE; // Setze den Wiedergabestatus
     PlaySound(fullMusicFilePath, NULL, SND_ASYNC | SND_FILENAME);
 }
 
-void pauseResumePlayback(const char* fullMusicFilePath, Boolean* isPlaying) {
-    if (*isPlaying) {
+void pauseResumePlayback(const char *fullMusicFilePath, Boolean *isPlaying)
+{
+    if (*isPlaying)
+    {
         *isPlaying = FALSE; // Setze den Wiedergabestatus
         PlaySound(NULL, NULL, SND_PURGE);
-    } else {
+    } else
+    {
         *isPlaying = TRUE; // Setze den Wiedergabestatus
         playWaveFile(fullMusicFilePath, isPlaying);
     }
