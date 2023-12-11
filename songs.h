@@ -109,6 +109,9 @@ void printTitelScreen();
 void printListOptionsTitelScreen();
 
 
+void printPlayMusicScreen(TSongInfos songs);
+
+
 void printMenuOptions(const int selectedOption);
 
 
@@ -203,6 +206,12 @@ void changeMusicFile();
 
 
 void playMusic();
+
+
+void playWaveFile(const char* fullMusicFilePath, Boolean* isPlaying);
+
+
+void pauseResumePlayback(const char* fullMusicFilePath, Boolean* isPlaying);
 
 
 void displayMusicMenu();

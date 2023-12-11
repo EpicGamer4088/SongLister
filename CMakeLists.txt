@@ -11,3 +11,4 @@ add_executable(
         )
 
 target_link_libraries(SongLister shlwapi)
+target_link_libraries(SongLister winmm)

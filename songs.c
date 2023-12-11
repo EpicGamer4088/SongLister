@@ -6,9 +6,11 @@
 #include <conio.h>
 #include <signal.h>
 #include <windows.h>
+#include <mmsystem.h>
 #include <shlobj.h>
 #include <shlwapi.h>
-#include <vlc/vlc.h>
+
+#pragma comment(lib, "winmm.lib")
 
 int indexCount = 0;
 String fullSongListFilePath = NULL;
@@ -119,7 +121,7 @@ void checkIfAllMusicFileEntriesAreValid()
     while (i < indexCount && fscanf(file, "%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
                                     songs[i].name, songs[i].album,
                                     songs[i].artist, songs[i].genre, &songs[i].yearPublished,
-                                    &songs[i].rating, songs[i].musicFileName) == 8)
+                                    &songs[i].rating, songs[i].musicFileName) == 7)
     {
         i++;
     }
@@ -133,7 +135,7 @@ void checkIfAllMusicFileEntriesAreValid()
         convertSpacesAndSpecialCharsToUnderscores(songFileName);
         convertToLowerCase(songFileName);
 
-        songFileName = mergeStr(songFileName, ".mp3");
+        songFileName = mergeStr(songFileName, ".wav");
 
         if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)) &&
             strCmpIgnoreCase(songs[j].musicFileName, "none"))
@@ -207,6 +209,19 @@ void printListOptionsTitelScreen()
            "|           Song Lister           |\n"
            "|                                 |\n"
            "-----------------------------------\n");
+}
+
+void printPlayMusicScreen(TSongInfos songs)
+{
+    printf("  ____________________________________________________\n");
+    printf(" /                                                    \\\n");
+    printf("|   Song:       %-30s         |\n", songs.name);
+    printf("|   Album:      %-30s         |\n", songs.album);
+    printf("|   Artist:     %-30s         |\n", songs.artist);
+    printf(" \\____________________________________________________/\n\n");
+    printf("Controls:\n");
+    printf("Space: Pause/Restart Playback\n");
+    printf("Esc:   Stop Playback\n");
 }
 
 void printMenuOptions(const int selectedOption)
@@ -343,7 +358,8 @@ String openMusicFileDialog()
     ofn.hwndOwner = NULL;
     ofn.lpstrFile = filePath;
     ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrFilter = "Media Files\0*.mp3;*.mp4\0All Files\0*.*\0";
+    //ofn.lpstrFilter = "Media Files\0*.wav;*.mp3;*.mp4\0All Files\0*.*\0";
+    ofn.lpstrFilter = "Media Files\0*.wav\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -916,7 +932,7 @@ void addMusicFile()
     while (i < indexCount && fscanf(file, "%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
                                     songs[i].name, songs[i].album,
                                     songs[i].artist, songs[i].genre, &songs[i].yearPublished,
-                                    &songs[i].rating, songs[i].musicFileName) == 8)
+                                    &songs[i].rating, songs[i].musicFileName) == 7)
     {
         i++;
     }
@@ -963,7 +979,7 @@ void addMusicFile()
     convertSpacesAndSpecialCharsToUnderscores(songFileName);
     convertToLowerCase(songFileName);
 
-    songFileName = mergeStr(songFileName, ".mp3");
+    songFileName = mergeStr(songFileName, ".wav");
 
     // Check if song already has a Valid Music File
     if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
@@ -1059,7 +1075,7 @@ String addMusicFileForNewSong(const TSongInfos songInfos)
     convertSpacesAndSpecialCharsToUnderscores(songFileName);
     convertToLowerCase(songFileName);
 
-    songFileName = mergeStr(songFileName, ".mp3");
+    songFileName = mergeStr(songFileName, ".wav");
 
     copyAndRenameMusicFile(musicFilePath, fullMusicFolderFilePath, songFileName);
 
@@ -1144,7 +1160,7 @@ void removeMusicFile()
     convertSpacesAndSpecialCharsToUnderscores(songFileName);
     convertToLowerCase(songFileName);
 
-    songFileName = mergeStr(songFileName, ".mp3");
+    songFileName = mergeStr(songFileName, ".wav");
 
     if (!fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
     {
@@ -1276,7 +1292,7 @@ void changeMusicFile()
     convertSpacesAndSpecialCharsToUnderscores(songFileName);
     convertToLowerCase(songFileName);
 
-    songFileName = mergeStr(songFileName, ".mp3");
+    songFileName = mergeStr(songFileName, ".wav");
 
     if (!fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
     {
@@ -1350,12 +1366,141 @@ void changeMusicFile()
     system("pause");
 }
 
-
 void playMusic()
 {
+    FILE *file = NULL;
+    int option;
+    Boolean isPlaying = FALSE;
+    Boolean endPlayback = FALSE;
+    TSongInfos songs[indexCount];
+    String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
 
+    for (int i = 0; i < indexCount; i++)
+    {
+        songs[i] = allocateSongInfos();
+    }
+
+    // Open File to Read
+    file = fopen(fullSongListFilePath, "rt");
+    if (file == NULL)
+    {
+        perror("Error when opening the file");
+        exit(1);
+    }
+
+    int i = 0;
+    while (i < indexCount && fscanf(file, "%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
+                                    songs[i].name, songs[i].album,
+                                    songs[i].artist, songs[i].genre, &songs[i].yearPublished,
+                                    &songs[i].rating, songs[i].musicFileName) == 7)
+    {
+        i++;
+    }
+
+    fclose(file);
+
+    system("cls");
+    printf("Enter the Song Name you want to play the Music File from: ");
+    fflush(stdin);
+    fgets(songName, MAX_STR_LEN, stdin);
+    charReplace('\n', '\0', songName, MAX_STR_LEN);
+
+    // Check if the song exists in the list
+    int songIndex;
+    Boolean songExists = FALSE;
+    for (int j = 0; j < i; j++)
+    {
+        if (strCmpIgnoreCase(songs[j].name, songName))
+        {
+            songExists = TRUE;
+            songIndex = j;
+            break;
+        }
+    }
+
+    if (!songExists)
+    {
+        usleep(500000);
+        system("cls");
+        printf("Your entered Song \"%s\" does not exist in your current Song List\n\n", songName);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        displayMusicMenu();
+    }
+    else if (strCmpIgnoreCase(songs[songIndex].musicFileName, "none"))
+    {
+        usleep(500000);
+        system("cls");
+        printf("Your entered Song \"%s\" does not have a Valid Music File\n\n", songName);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+        system("pause");
+        displayMusicMenu();
+    }
+
+    usleep(100000);
+    system("cls");
+
+    printPlayMusicScreen(songs[songIndex]);
+
+    usleep(500000);
+
+    playWaveFile(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName), &isPlaying);
+
+    while (!endPlayback)
+    {
+        option = getch();
+        switch (option)
+        {
+            case 32: // Space
+                pauseResumePlayback(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName), &isPlaying);
+                break;
+            case 27: // ESC
+                pauseResumePlayback(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName), &isPlaying);
+                endPlayback = TRUE;
+                break;
+        }
+    }
+
+    // Release of allocated memory
+    free(songName);
+    free(songFileName);
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
+    printf("\n\n");
 
     system("pause");
+}
+
+void playWaveFile(const char* fullMusicFilePath, Boolean* isPlaying) {
+    *isPlaying = TRUE; // Setze den Wiedergabestatus
+    PlaySound(fullMusicFilePath, NULL, SND_ASYNC | SND_FILENAME);
+}
+
+void pauseResumePlayback(const char* fullMusicFilePath, Boolean* isPlaying) {
+    if (*isPlaying) {
+        *isPlaying = FALSE; // Setze den Wiedergabestatus
+        PlaySound(NULL, NULL, SND_PURGE);
+    } else {
+        *isPlaying = TRUE; // Setze den Wiedergabestatus
+        playWaveFile(fullMusicFilePath, isPlaying);
+    }
 }
 
 void displayMusicMenu()
