@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26.4)
-project(Projekt2AHITNGr1 C)
+project(SongLister C)
 
 set(CMAKE_C_STANDARD 11)
 
@@ -9,6 +9,9 @@ add_executable(
         songs.c
         songs.h
         )
+
+
+
 
 target_link_libraries(SongLister shlwapi)
 target_link_libraries(SongLister winmm)

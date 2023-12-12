@@ -731,7 +731,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "Projekt2AHITNGr1"
+			"value" : "SongLister"
 		},
 		{
 			"name" : "CMAKE_RANLIB",
@@ -1110,6 +1110,18 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "FFmpeg_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for FFmpeg."
+				}
+			],
+			"type" : "PATH",
+			"value" : "FFmpeg_DIR-NOTFOUND"
+		},
+		{
 			"name" : "Projekt2AHITNGr1_BINARY_DIR",
 			"properties" : 
 			[
@@ -1135,6 +1147,42 @@
 		},
 		{
 			"name" : "Projekt2AHITNGr1_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister"
+		},
+		{
+			"name" : "SongLister_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug"
+		},
+		{
+			"name" : "SongLister_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "SongLister_SOURCE_DIR",
 			"properties" : 
 			[
 				{

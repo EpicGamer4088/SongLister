@@ -21,7 +21,6 @@ void Main()
 {
     signal(SIGINT, exitHandler); // SIGINT is triggered, for example, by Ctrl+C
     signal(SIGTERM, exitHandler); // SIGTERM is triggered, for example, when exiting by the X in the top right
-    //atexit(exitHandler); // atexit is triggered, when the Program closes, for example, by exit(1)
 
     fullSongListFilePath = (String) malloc(MAX_PATH * sizeof(char));
     fullMusicFolderFilePath = (String) malloc(MAX_PATH * sizeof(char));
@@ -45,7 +44,7 @@ void MainMenu()
     while (TRUE)
     {
         system("cls");
-        printTitelScreen();
+        printTitleScreen();
         printMenuOptions(selectedOption);
 
         option = getch();
@@ -99,15 +98,48 @@ void MainMenu()
 void checkIfAllMusicFileEntriesAreValid()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+            free(songName);
+            free(songFileName);
+            free(musicFilePath);
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
+
 
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
@@ -191,9 +223,20 @@ void checkIfAllMusicFileEntriesAreValid()
             fclose(file);
         }
     }
+
+    // Release of allocated memory
+    for (int j = 0; j < indexCount; j++)
+    {
+        freeSongInfos(songs[j]);
+    }
+
+    free(songs);
+    free(songName);
+    free(songFileName);
+    free(musicFilePath);
 }
 
-void printTitelScreen()
+void printTitleScreen()
 {
     printf("--------------------------------\n"
            "|                              |\n"
@@ -202,7 +245,7 @@ void printTitelScreen()
            "--------------------------------\n");
 }
 
-void printListOptionsTitelScreen()
+void printListOptionsTitleScreen()
 {
     printf("-----------------------------------\n"
            "|                                 |\n"
@@ -359,7 +402,7 @@ String openMusicFileDialog()
     ofn.lpstrFile = filePath;
     ofn.nMaxFile = MAX_PATH;
     //ofn.lpstrFilter = "Media Files\0*.wav;*.mp3;*.mp4\0All Files\0*.*\0";
-    ofn.lpstrFilter = "Media Files\0*.wav\0All Files\0*.*\0";
+    ofn.lpstrFilter = ".wav\0*.wav\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -531,7 +574,7 @@ void updateUserData()
     while (TRUE)
     {
         system("cls");
-        printTitelScreen();
+        printTitleScreen();
         printChangeUserDataOptions(selectedOption);
 
         option = getch();
@@ -578,7 +621,6 @@ void updateSongListFilePathInUserDataFile()
     printf("Succesfully Updated SongList File Path\n\n");
     system("pause");
 }
-
 
 void updateMusicFolderPathInUserDataFile()
 {
@@ -699,12 +741,39 @@ void removeSong()
     FILE *file = NULL;
     int songIndex;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
-    TSongInfos songs[indexCount];
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
 
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+            free(songName);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -744,11 +813,16 @@ void removeSong()
     if (!songExists)
     {
         printf("\n\nYour entered Song \"%s\" does not exist in your current Song List\n\n", songName);
-        free(songName);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+
         system("pause");
         MainMenu();
     }
@@ -782,10 +856,14 @@ void removeSong()
 
     removeMusicFileFromMusicFolder(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName));
 
+    // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(songName);
 
     indexCount--;
 
@@ -802,12 +880,39 @@ void changeSongInformations()
 
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
-    TSongInfos songs[indexCount];
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
 
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+            free(songName);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -849,11 +954,16 @@ void changeSongInformations()
     if (!songExists)
     {
         printf("\n\nYour entered Song \"%s\" does not exist in your current Song List\n\n", songName);
-        free(songName);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+
         system("pause");
         MainMenu();
     }
@@ -892,10 +1002,14 @@ void changeSongInformations()
 
     fclose(file);
 
+    // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(songName);
 
     usleep(500000);
     system("cls");
@@ -907,16 +1021,47 @@ void changeSongInformations()
 void addMusicFile()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
-    for (int i = 0; i < indexCount; i++)
+    if (songs == NULL)
     {
-        songs[i] = allocateSongInfos();
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        exit(1);
     }
 
+    // Dynamic allocation for each song element
+    for (int i = 0; i < indexCount; i++)
+    {
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+            free(songName);
+            free(songFileName);
+            free(musicFilePath);
+
+            exit(1);
+        }
+    }
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
     if (file == NULL)
@@ -960,23 +1105,23 @@ void addMusicFile()
         usleep(500000);
         system("cls");
         printf("Your entered Song \"%s\" does not exist in your current Song List\n\n", songName);
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     }
 
-    songFileName = mergeStr(mergeStr(songs[songIndex].artist, "__"), songName);
-
-    convertSpacesAndSpecialCharsToUnderscores(songFileName);
-    convertToLowerCase(songFileName);
-
-    songFileName = mergeStr(songFileName, ".wav");
+    songFileName = generateMusicFileName(songs[songIndex]);
 
     // Check if song already has a Valid Music File
     if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
@@ -987,13 +1132,16 @@ void addMusicFile()
         printf("Your entered Song already has a Valid Music File.\nYou can change it via the Change Option in the Menu\n\n");
 
         // Release of allocated memory
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     }
@@ -1042,12 +1190,15 @@ void addMusicFile()
     printf("Successfully added Music File for Song \"%s\"\n\n", songName);
 
     // Release of allocated memory
-    free(songName);
-    free(songFileName);
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(songName);
+    free(songFileName);
+    free(musicFilePath);
 
     system("pause");
 }
@@ -1065,16 +1216,11 @@ String addMusicFileForNewSong(const TSongInfos songInfos)
 
     musicFilePath = openMusicFileDialog();
 
-    songFileName = mergeStr(songInfos.artist, "__");
-
-    songFileName = mergeStr(songFileName, songInfos.name);
-
-    convertSpacesAndSpecialCharsToUnderscores(songFileName);
-    convertToLowerCase(songFileName);
-
-    songFileName = mergeStr(songFileName, ".wav");
+    songFileName = generateMusicFileName(songInfos);
 
     copyAndRenameMusicFile(musicFilePath, fullMusicFolderFilePath, songFileName);
+
+    free(musicFilePath);
 
     usleep(100000);
     system("cls");
@@ -1089,14 +1235,46 @@ String addMusicFileForNewSong(const TSongInfos songInfos)
 void removeMusicFile()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+            free(songName);
+            free(songFileName);
+            free(musicFilePath);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -1141,36 +1319,41 @@ void removeMusicFile()
         usleep(100000);
         system("cls");
         printf("Your entered Song \"%s\" does not exist in your current Song List\n\n", songName);
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     }
 
-    songFileName = mergeStr(mergeStr(songs[songIndex].artist, "__"), songName);
-
-    convertSpacesAndSpecialCharsToUnderscores(songFileName);
-    convertToLowerCase(songFileName);
-
-    songFileName = mergeStr(songFileName, ".wav");
+    songFileName = generateMusicFileName(songs[songIndex]);
 
     if (!fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
     {
         usleep(100000);
         system("cls");
         printf("Your entered Song does not have a Valid Music File.\nYou can add one via the Add Option in the Menu\n\n");
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     }
@@ -1208,12 +1391,15 @@ void removeMusicFile()
     printf("Successfully removed Music File from Song \"%s\"\n\n", songName);
 
     // Release of allocated memory
-    free(songName);
-    free(songFileName);
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(songName);
+    free(songFileName);
+    free(musicFilePath);
 
     system("pause");
 }
@@ -1221,14 +1407,46 @@ void removeMusicFile()
 void changeMusicFile()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+            free(songName);
+            free(songFileName);
+            free(musicFilePath);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -1273,13 +1491,18 @@ void changeMusicFile()
         usleep(100000);
         system("cls");
         printf("Your entered Song \"%s\" does not exist in your current Song List\n\n", songName);
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     }
@@ -1296,13 +1519,18 @@ void changeMusicFile()
         usleep(100000);
         system("cls");
         printf("Your entered Song does not have a Valid Music File.\nYou can add one via the Add Option in the Menu\n\n");
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     }
@@ -1353,12 +1581,15 @@ void changeMusicFile()
     printf("Successfully changed Music File from Song \"%s\"\n\n", songName);
 
     // Release of allocated memory
-    free(songName);
-    free(songFileName);
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(songName);
+    free(songFileName);
+    free(musicFilePath);
 
     system("pause");
 }
@@ -1369,14 +1600,47 @@ void playMusic()
     int option;
     Boolean isPlaying = FALSE;
     Boolean endPlayback = FALSE;
-    TSongInfos songs[indexCount];
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL ||
+            songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+            free(songName);
+            free(songFileName);
+            free(musicFilePath);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -1422,13 +1686,18 @@ void playMusic()
         usleep(500000);
         system("cls");
         printf("Your entered Song \"%s\" does not exist in your current Song List\n\n", songName);
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     } else if (strCmpIgnoreCase(songs[songIndex].musicFileName, "none"))
@@ -1436,13 +1705,18 @@ void playMusic()
         usleep(500000);
         system("cls");
         printf("Your entered Song \"%s\" does not have a Valid Music File\n\n", songName);
-        free(songName);
-        free(songFileName);
-        free(musicFilePath);
+
+        // Release of allocated memory
         for (int j = 0; j < indexCount; j++)
         {
             freeSongInfos(songs[j]);
         }
+
+        free(songs);
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+
         system("pause");
         displayMusicMenu();
     }
@@ -1478,12 +1752,15 @@ void playMusic()
     }
 
     // Release of allocated memory
-    free(songName);
-    free(songFileName);
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(songName);
+    free(songFileName);
+    free(musicFilePath);
 
     printf("\n\n");
 
@@ -1519,7 +1796,7 @@ void displayMusicMenu()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printMusicOptions(selectedOption);
 
         option = getch();
@@ -1604,7 +1881,7 @@ void displayListedSongs()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printListOptions(selectedOption);
 
         option = getch();
@@ -1649,11 +1926,37 @@ void displayListedSongs()
 void displayListedSongsStatic()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[i] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -1690,6 +1993,8 @@ void displayListedSongsStatic()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -1699,14 +2004,46 @@ void displayListedSongsWithValidMusicFile()
     system("cls");
 
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        free(musicFilePath);
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+            free(songName);
+            free(songFileName);
+            free(musicFilePath);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -1741,12 +2078,15 @@ void displayListedSongsWithValidMusicFile()
     }
 
     // Release of allocated memory
-    free(songName);
-    free(songFileName);
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(songName);
+    free(songFileName);
+    free(musicFilePath);
 
     printf("\n\n");
     system("pause");
@@ -1762,7 +2102,7 @@ void displayListedSongsSorted()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printSortedListOptions(selectedOption);
 
         option = getch();
@@ -1822,7 +2162,7 @@ void displayListedSongsSortedByName()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printSortedListByNameOptions(selectedOption);
 
         option = getch();
@@ -1865,11 +2205,37 @@ void displayListedSongsSortedByNameA2Z()
 {
     FILE *file = NULL;
 
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -1908,6 +2274,8 @@ void displayListedSongsSortedByNameA2Z()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -1917,12 +2285,37 @@ void displayListedSongInfosFromAGivenSong()
     system("cls");
     FILE *file = NULL;
 
-    // Read the song data from the file
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -1949,6 +2342,15 @@ void displayListedSongInfosFromAGivenSong()
     if (searchSong == NULL)
     {
         perror("Memory allocation error");
+
+        // Release of allocated memory
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+
+        free(songs);
+
         exit(1);
     }
 
@@ -1968,14 +2370,14 @@ void displayListedSongInfosFromAGivenSong()
         }
     }
 
-    // Free the dynamically allocated memory for searchAlbum
-    free(searchSong);
-
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(searchSong);
 
     printf("\n\n");
     system("pause");
@@ -1991,7 +2393,7 @@ void displayListedSongsSortedByAlbum()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printSortedListByAlbumOptions(selectedOption);
 
         option = getch();
@@ -2033,11 +2435,37 @@ void displayListedSongsSortedByAlbum()
 void displayListedSongsSortedByAlbumA2Z()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -2077,6 +2505,8 @@ void displayListedSongsSortedByAlbumA2Z()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2086,11 +2516,37 @@ void displayListedSongsWithAGivenAlbum()
     system("cls");
 
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -2117,6 +2573,15 @@ void displayListedSongsWithAGivenAlbum()
     if (searchAlbum == NULL)
     {
         perror("Memory allocation error");
+
+        // Release of allocated memory
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+
+        free(songs);
+
         exit(1);
     }
 
@@ -2136,14 +2601,14 @@ void displayListedSongsWithAGivenAlbum()
         }
     }
 
-    // Free the dynamically allocated memory for searchAlbum
-    free(searchAlbum);
-
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(searchAlbum);
 
     printf("\n\n");
     system("pause");
@@ -2159,7 +2624,7 @@ void displayListedSongsSortedByArtist()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printSortedListByArtistOptions(selectedOption);
 
         option = getch();
@@ -2201,11 +2666,37 @@ void displayListedSongsSortedByArtist()
 void displayListedSongsSortedByArtistA2Z()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -2244,6 +2735,8 @@ void displayListedSongsSortedByArtistA2Z()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2253,11 +2746,37 @@ void displayListedSongsWithAGivenArtist()
     system("cls");
 
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -2303,14 +2822,14 @@ void displayListedSongsWithAGivenArtist()
         }
     }
 
-    // Free the dynamically allocated memory for searchAlbum
-    free(searchArtist);
-
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
         freeSongInfos(songs[j]);
     }
+
+    free(songs);
+    free(searchArtist);
 
     printf("\n\n");
     system("pause");
@@ -2321,7 +2840,6 @@ void displayListedSongsByGenre()
     system("cls");
 
     FILE *file = NULL;
-    // Dynamic allocation for the entered genre name
     char *searchGenre = malloc(MAX_STR_LEN * sizeof(char));
 
     if (searchGenre == NULL)
@@ -2330,42 +2848,28 @@ void displayListedSongsByGenre()
         exit(1);
     }
 
-    // User input for desired genre
-    printf("Enter the genre: ");
-
-    if (fgets(searchGenre, MAX_STR_LEN, stdin) == NULL)
-    {
-        perror("Error reading input");
-        free(searchGenre);
-        exit(1);
-    }
-
-    // Remove the line break from fgets
-    charReplace('\n', '\0', searchGenre, MAX_STR_LEN);
-
-    // Dynamic allocation for the song information
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL)
     {
         perror("Memory allocation error");
         free(searchGenre);
+
         exit(1);
     }
 
     // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        for (int j = 0; i < indexCount; i++)
+        for (int j = 0; j < indexCount; j++)
         {
-            songs[i] = allocateSongInfos();
+            songs[j] = allocateSongInfos();
         }
 
         if (songs[i].name == NULL || songs[i].album == NULL ||
-            songs[i].artist == NULL || songs[i].genre == NULL)
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
         {
             perror("Memory allocation error");
-            free(searchGenre);
 
             // Release of allocated memory
             for (int j = 0; j < indexCount; j++)
@@ -2374,10 +2878,34 @@ void displayListedSongsByGenre()
             }
 
             free(songs);
+            free(searchGenre);
 
             exit(1);
         }
     }
+
+    // User input for desired genre
+    printf("Enter the genre: ");
+
+    if (fgets(searchGenre, MAX_STR_LEN, stdin) == NULL)
+    {
+        perror("Error reading input");
+
+        // Release of allocated memory
+        for (int j = 0; j < indexCount; j++)
+        {
+            freeSongInfos(songs[j]);
+        }
+
+        free(songs);
+        free(searchGenre);
+
+        exit(1);
+    }
+
+    // Remove the line break from fgets
+    charReplace('\n', '\0', searchGenre, MAX_STR_LEN);
+
 
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
@@ -2434,7 +2962,7 @@ void displayListedSongsByYearOfPublishing()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printSortedListByYearOfPublishingOptions(selectedOption);
 
         option = getch();
@@ -2488,12 +3016,39 @@ void displayListedSongsByYearOfPublishing()
 void displayListedSongsByYearOfPublishingNew2Old()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
+
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
     if (file == NULL)
@@ -2514,7 +3069,7 @@ void displayListedSongsByYearOfPublishingNew2Old()
     fclose(file);
 
     // Sort songs by release year (new - old)
-    qsort(songs, i, sizeof(TSongInfos), compareSongsByYearOfPublishing);
+    qsort(songs, i, sizeof(TSongInfos), compareSongsByYearOfPublishingNew2Old);
 
     printTableHeader();
 
@@ -2530,6 +3085,8 @@ void displayListedSongsByYearOfPublishingNew2Old()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2537,11 +3094,37 @@ void displayListedSongsByYearOfPublishingNew2Old()
 void displayListedSongsByYearOfPublishingOld2New()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -2564,7 +3147,7 @@ void displayListedSongsByYearOfPublishingOld2New()
     fclose(file);
 
     // Sort songs by release year (old - new)
-    qsort(songs, i, sizeof(TSongInfos), compareSongsByYearOfPublishing);
+    qsort(songs, i, sizeof(TSongInfos), compareSongsByYearOfPublishingOld2New);
 
     printTableHeader();
 
@@ -2580,6 +3163,8 @@ void displayListedSongsByYearOfPublishingOld2New()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2590,18 +3175,43 @@ void displayListedSongsNewerThanTheGivenYear()
 
     FILE *file = NULL;
     int givenYear;
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
+
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
+    for (int i = 0; i < indexCount; i++)
+    {
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
+    }
 
     // User input for the desired publication year
     printf("Enter the Year:");
     scanf("%d", &givenYear);
     fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
-
-    TSongInfos songs[indexCount];
-
-    for (int i = 0; i < indexCount; i++)
-    {
-        songs[i] = allocateSongInfos();
-    }
 
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
@@ -2622,27 +3232,18 @@ void displayListedSongsNewerThanTheGivenYear()
 
     fclose(file);
 
-    // Filter the songs according to the entered release year
-    TSongInfos *filteredSongs = malloc(i * sizeof(TSongInfos));
-    int filteredCount = 0;
+    // Sort the filtered songs in ascending order of publication year
+    qsort(songs, i, sizeof(TSongInfos), compareSongsByYearOfPublishingOld2New);
+
+    printTableHeader();
 
     for (int j = 0; j < i; j++)
     {
         if (songs[j].yearPublished >= givenYear)
         {
-            filteredSongs[filteredCount++] = songs[j];
+            printTableRow(songs[j]);
+            printPartingLine();
         }
-    }
-
-    // Sort the filtered songs in ascending order of publication year
-    qsort(filteredSongs, filteredCount, sizeof(TSongInfos), compareSongsByYearOfPublishing);
-
-    printTableHeader();
-
-    for (int j = 0; j < filteredCount; j++)
-    {
-        printTableRow(filteredSongs[j]);
-        printPartingLine();
     }
 
     // Release of allocated memory
@@ -2651,7 +3252,8 @@ void displayListedSongsNewerThanTheGivenYear()
         freeSongInfos(songs[j]);
     }
 
-    free(filteredSongs);
+    free(songs);
+    //free(filteredSongs);
 
     printf("\n\n");
     system("pause");
@@ -2663,18 +3265,43 @@ void displayListedSongsOlderThanTheGivenYear()
 
     FILE *file = NULL;
     int givenYear;
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
+
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
+    for (int i = 0; i < indexCount; i++)
+    {
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
+    }
 
     // User input for the desired publication year
     printf("Enter the Year:");
     scanf("%d", &givenYear);
     fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
-
-    TSongInfos songs[indexCount];
-
-    for (int i = 0; i < indexCount; i++)
-    {
-        songs[i] = allocateSongInfos();
-    }
 
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
@@ -2697,7 +3324,7 @@ void displayListedSongsOlderThanTheGivenYear()
 
     // Filter the songs according to the entered release year
     // and output them in ascending order of publication year
-    qsort(songs, i, sizeof(TSongInfos), compareSongsByYearOfPublishing);
+    qsort(songs, i, sizeof(TSongInfos), compareSongsByYearOfPublishingOld2New);
 
     printTableHeader();
 
@@ -2716,6 +3343,8 @@ void displayListedSongsOlderThanTheGivenYear()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2726,18 +3355,43 @@ void displayListedSongsWithAGivenYearOfPublishing()
 
     FILE *file = NULL;
     int givenYear;
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
+
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
+    for (int i = 0; i < indexCount; i++)
+    {
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
+    }
 
     // User input for the desired publication year
     printf("Enter the Year:");
     scanf("%d", &givenYear);
     fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
-
-    TSongInfos songs[indexCount];
-
-    for (int i = 0; i < indexCount; i++)
-    {
-        songs[i] = allocateSongInfos();
-    }
 
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
@@ -2776,6 +3430,8 @@ void displayListedSongsWithAGivenYearOfPublishing()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2790,7 +3446,7 @@ void displayListedSongsByRating()
     while (TRUE)
     {
         system("cls");
-        printListOptionsTitelScreen();
+        printListOptionsTitleScreen();
         printSortedListByRatingOptions(selectedOption);
 
         option = getch();
@@ -2836,11 +3492,37 @@ void displayListedSongsByRating()
 void displayListedSongsByRatingBest2Worse()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -2879,6 +3561,8 @@ void displayListedSongsByRatingBest2Worse()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2886,11 +3570,37 @@ void displayListedSongsByRatingBest2Worse()
 void displayListedSongsByRatingWorse2Best()
 {
     FILE *file = NULL;
-    TSongInfos songs[indexCount];
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
     for (int i = 0; i < indexCount; i++)
     {
-        songs[i] = allocateSongInfos();
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
     }
 
     // Open File to Read
@@ -2929,6 +3639,8 @@ void displayListedSongsByRatingWorse2Best()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -2939,18 +3651,43 @@ void displayListedSongsWithAGivenRating()
 
     FILE *file = NULL;
     int givenRating;
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
+
+    if (songs == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    // Dynamic allocation for each song element
+    for (int i = 0; i < indexCount; i++)
+    {
+        for (int j = 0; j < indexCount; j++)
+        {
+            songs[j] = allocateSongInfos();
+        }
+
+        if (songs[i].name == NULL || songs[i].album == NULL ||
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
+            perror("Memory allocation error");
+
+            // Release of allocated memory
+            for (int j = 0; j < indexCount; j++)
+            {
+                freeSongInfos(songs[j]);
+            }
+
+            free(songs);
+
+            exit(1);
+        }
+    }
 
     // User input for the desired rating
     printf("Enter the Rating:");
     scanf("%d", &givenRating);
     fflush(stdin); // Empty buffer to avoid unwanted characters in the buffer
-
-    TSongInfos songs[indexCount];
-
-    for (int i = 0; i < indexCount; i++)
-    {
-        songs[i] = allocateSongInfos();
-    }
 
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
@@ -2989,6 +3726,8 @@ void displayListedSongsWithAGivenRating()
         freeSongInfos(songs[j]);
     }
 
+    free(songs);
+
     printf("\n\n");
     system("pause");
 }
@@ -3002,6 +3741,24 @@ void exitProgramm(const int returnValue)
     exit(returnValue);
 }
 
+String generateMusicFileName(const TSongInfos songInfos)
+{
+    String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+
+    if (songFileName != NULL)
+    {
+        songFileName = mergeStr(songInfos.artist, "__");
+        songFileName = mergeStr(songFileName, songInfos.name);
+
+        convertSpacesAndSpecialCharsToUnderscores(songFileName);
+        convertToLowerCase(songFileName);
+
+        songFileName = mergeStr(songFileName, ".wav");
+    }
+
+    return songFileName;
+}
+
 void charReplace(const char old, const char new, char *haystack, const int maxLength)
 {
     for (int i = 0; i < maxLength && haystack[i] != '\0'; i++)
@@ -3013,7 +3770,7 @@ void charReplace(const char old, const char new, char *haystack, const int maxLe
     }
 }
 
-char *mergeStr(const char *str1, const char *str2)
+String mergeStr(const char *str1, const char *str2)
 {
     int len1 = 0;
     int len2 = 0;
@@ -3075,6 +3832,12 @@ TSongInfos allocateSongInfos()
             FALSE
     };
 
+    if (songInfos.name == NULL || songInfos.album == NULL | songInfos.artist == NULL ||
+        songInfos.genre == NULL || songInfos.musicFileName == NULL)
+    {
+        printf("HALLLO SEEPLPL");
+    }
+
     return songInfos;
 }
 
@@ -3083,11 +3846,6 @@ void setIndexCount()
     FILE *file = fopen(fullSongListFilePath, "rt");
 
     indexCount = 0;
-
-    // Store the current position in the file
-    const long int currentPosition = ftell(file);
-
-    rewind(file);
 
     while (1)
     {
@@ -3178,12 +3936,17 @@ void convertToLowerCase(char *str)
 {
     if (str == NULL)
     {
-        return;  // Handle NULL input
+        return;
     }
 
+    // Iterate through each character in the string
     while (*str)
     {
-        *str = tolower((unsigned char) *str);
+        // Convert the character to lowercase without using tolower from the string library
+        if (*str >= 'A' && *str <= 'Z')
+        {
+            *str += ('a' - 'A');  // Convert uppercase to lowercase
+        }
         str++;
     }
 }
@@ -3213,7 +3976,16 @@ int compareSongsByArtist(const void *a, const void *b)
     return strcmp(songA->artist, songB->artist);
 }
 
-int compareSongsByYearOfPublishing(const void *a, const void *b)
+int compareSongsByYearOfPublishingNew2Old(const void *a, const void *b)
+{
+    const TSongInfos *songA = (const TSongInfos *) a;
+    const TSongInfos *songB = (const TSongInfos *) b;
+
+    // Sort by publication year in ascending order
+    return songB->yearPublished - songA->yearPublished;
+}
+
+int compareSongsByYearOfPublishingOld2New(const void *a, const void *b)
 {
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
