@@ -116,8 +116,7 @@ typedef enum Boolean
     FALSE, ///< Represents the boolean value false.
     TRUE   ///< Represents the boolean value true.
 }
-        Boolean;
-
+Boolean;
 
 /**
  * @brief Structure representing information about a song.
@@ -146,7 +145,7 @@ typedef struct SongInfos
     String musicFileName; ///< File name of the associated music file.
     Boolean musicFile;    ///< Flag indicating whether a music file is associated with the song.
 }
-        TSongInfos;
+TSongInfos;
 
 /**
  * @brief Main function for the program.
