@@ -1,0 +1,9 @@
+# ninja log v5
+3219	3408	7236072967965665	Projekt2AHITNGr1.exe	530809c1dfcd637a
+2	995	7239814000012492	build.ninja	ef6ec65cf74f0a2d
+3	142	7239529191179256	CMakeFiles/SongLister.dir/main.c.obj	66322acb0c0a3bbe
+3	2315	7239562365288776	CMakeFiles/SongLister.dir/songs.c.obj	b58fdec55009e825
+2317	3262	7239562369199103	SongLister.exe	81cc703bffd1738a
+41	350	7240070023456607	CMakeFiles/SongLister.dir/main.c.obj	189b8c88119b8938
+54	3580	7240070055763017	CMakeFiles/SongLister.dir/songs.c.obj	55eab15ac94f18a2
+3586	3990	7240070059802404	SongLister.exe	340e35fd54d66a6c

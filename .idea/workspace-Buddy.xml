@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="Projekt2AHITNGr1" targetName="SongLister" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0ce50d6d-76b5-4f9f-90ba-9d9fdaf99ea7" name="Changes" comment="Implemented&#10;logic to Play a song with a Valid Music File">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/cache-v2-0290b18e47cc01679791.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-9f2fc3143d0173701eaa.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/target-SongLister-Debug-d08586440291c7c3aab0.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/toolchains-v1-5bc7b7054c2d270eb39e.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CMakeCCompiler.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CMakeCCompiler.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CMakeRCCompiler.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CMakeRCCompiler.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CompilerIdC/a.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.26.4/CompilerIdC/a.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SongLister.dir/main.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SongLister.dir/main.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SongLister.dir/songs.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SongLister.dir/songs.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-environment.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-environment.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/rules.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/SongLister.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SongLister.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/userdata.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/userdata.bin" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="clangTidyViaClangd" value="false" />
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/main.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/songs.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_HOME_DIR$/bin/mingw/x86_64-w64-mingw32/include/stdio.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_HOME_DIR$/bin/mingw/x86_64-w64-mingw32/include/stdlib.h" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2023" />
+    <option name="minorVersion" value="3" />
+    <option name="productBranch" value="Nova" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2YQxHn6jTtY5vP3VgWI6lu6BM8D" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;CMake Application.Projekt2AHITNGr1.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;unstable&quot;,
+    &quot;last_opened_file_path&quot;: &quot;H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.C/C++&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: [
+    ]
+  }
+}</component>
+  <component name="RunManager" selected="CMake Application.SongLister">
+    <configuration name="SongLister" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="true" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Projekt2AHITNGr1" TARGET_NAME="SongLister" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Projekt2AHITNGr1" RUN_TARGET_NAME="SongLister">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="main.c" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister" TARGET_NAME="main.c" CONFIG_NAME="main.c">
+      <option name="sourceFile" value="main.c" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="C/C++ File.main.c" />
+      <item itemvalue="CMake Application.SongLister" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0ce50d6d-76b5-4f9f-90ba-9d9fdaf99ea7" name="Changes" comment="" />
+      <created>1700471521404</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1700471521404</updated>
+      <workItem from="1700471524173" duration="4904000" />
+      <workItem from="1700490360071" duration="1011000" />
+      <workItem from="1700510486275" duration="965000" />
+      <workItem from="1700511536256" duration="313000" />
+      <workItem from="1700511871443" duration="1573000" />
+      <workItem from="1700516841470" duration="1407000" />
+      <workItem from="1700518272004" duration="36000" />
+      <workItem from="1700518413135" duration="3842000" />
+      <workItem from="1700565962806" duration="55000" />
+      <workItem from="1700590170720" duration="94000" />
+      <workItem from="1700590291691" duration="1144000" />
+      <workItem from="1700601366465" duration="6237000" />
+      <workItem from="1700643318202" duration="626000" />
+      <workItem from="1700645200041" duration="4579000" />
+      <workItem from="1700664784284" duration="422000" />
+      <workItem from="1700665505386" duration="2000" />
+      <workItem from="1700666394096" duration="6605000" />
+      <workItem from="1700679679228" duration="595000" />
+      <workItem from="1700680441075" duration="349000" />
+      <workItem from="1700729685828" duration="126000" />
+      <workItem from="1700732025024" duration="7482000" />
+      <workItem from="1700759606129" duration="366000" />
+      <workItem from="1700759999632" duration="89000" />
+      <workItem from="1700775544497" duration="5226000" />
+      <workItem from="1700812445468" duration="1318000" />
+      <workItem from="1700813822455" duration="113000" />
+      <workItem from="1700857430527" duration="555000" />
+      <workItem from="1700858328683" duration="5661000" />
+      <workItem from="1700866644320" duration="185000" />
+      <workItem from="1700934448324" duration="15542000" />
+      <workItem from="1701016595879" duration="917000" />
+      <workItem from="1701021038313" duration="66000" />
+      <workItem from="1701027258242" duration="2047000" />
+      <workItem from="1701029402533" duration="12000" />
+      <workItem from="1701074637036" duration="528000" />
+      <workItem from="1701075215221" duration="4249000" />
+      <workItem from="1701090794308" duration="11000" />
+      <workItem from="1701108426528" duration="1975000" />
+      <workItem from="1701111117880" duration="930000" />
+      <workItem from="1701249404605" duration="1225000" />
+      <workItem from="1701250653153" duration="4175000" />
+      <workItem from="1701260000742" duration="429000" />
+      <workItem from="1701271304507" duration="33000" />
+      <workItem from="1701284017420" duration="102000" />
+      <workItem from="1701284216658" duration="157000" />
+      <workItem from="1701285378679" duration="612000" />
+      <workItem from="1701464924891" duration="4655000" />
+      <workItem from="1701815809148" duration="561000" />
+      <workItem from="1701862236535" duration="57000" />
+      <workItem from="1701862626656" duration="1015000" />
+      <workItem from="1701864411343" duration="7617000" />
+      <workItem from="1701874288489" duration="2041000" />
+      <workItem from="1701898698374" duration="523000" />
+      <workItem from="1701899478738" duration="4620000" />
+      <workItem from="1701960654339" duration="325000" />
+      <workItem from="1701961099402" duration="2243000" />
+      <workItem from="1701972523667" duration="20365000" />
+      <workItem from="1702047387930" duration="3124000" />
+      <workItem from="1702050629607" duration="158000" />
+      <workItem from="1702050850784" duration="4714000" />
+      <workItem from="1702056941047" duration="2226000" />
+      <workItem from="1702137977274" duration="9199000" />
+      <workItem from="1702162369649" duration="1500000" />
+      <workItem from="1702223322052" duration="2153000" />
+      <workItem from="1702229663246" duration="739000" />
+      <workItem from="1702243509961" duration="8349000" />
+      <workItem from="1702278174826" duration="6000" />
+      <workItem from="1702278197396" duration="2149000" />
+      <workItem from="1702303715526" duration="800000" />
+    </task>
+    <task id="LOCAL-00001" summary="unstable version&#10;SongList and Music Folder filepath via windows api">
+      <option name="closed" value="true" />
+      <created>1701865670655</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1701865670655</updated>
+    </task>
+    <task id="LOCAL-00002" summary="unstable version&#10;added funktions:&#10;openCSVFileDialog&#10;openFolderDialog&#10;checkAndHandleUserDataFile&#10;checkAndHandleMusicFileFolder&#10;setUserData&#10;writeUserDataIntoUserDataFile&#10;readUserDataFromUserDataFile&#10;and deletet all FILE* file parameter and replaced it with file opening and closing with the needed modes in the display funktion themselfe.">
+      <option name="closed" value="true" />
+      <created>1701876014494</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1701876014494</updated>
+    </task>
+    <task id="LOCAL-00003" summary="added&#10;logic for userdata.bin file">
+      <option name="closed" value="true" />
+      <created>1701902836528</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701902836528</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Implemented file handling logic for reading user data and music-related tasks. Modified menu navigation and song list reading logic. Incorporated dynamic memory allocation and improved user interface. Reviewed and refined various functions. Updated function comments and added external variable declarations. Overall enhancements and optimizations to the project.">
+      <option name="closed" value="true" />
+      <created>1701993000545</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1701993000545</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Implemented file handling logic for reading user data and music-related tasks. Modified menu navigation and song list reading logic. Incorporated dynamic memory allocation and improved user interface. Reviewed and refined various functions. Updated function comments and added external variable declarations. Overall enhancements and optimizations to the project.">
+      <option name="closed" value="true" />
+      <created>1701993021431</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1701993021431</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Implemented file handling logic for reading user data and music-related tasks. Modified menu navigation and song list reading logic. Incorporated dynamic memory allocation and improved user interface. Reviewed and refined various functions. Updated function comments and added external variable declarations. Overall enhancements and optimizations to the project.">
+      <option name="closed" value="true" />
+      <created>1701993030970</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1701993030970</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Implemented Funktion&#10;&quot;removeMusicFile&quot; to remove a music file from A Song in the Song List">
+      <option name="closed" value="true" />
+      <created>1702054673360</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1702054673360</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Implemented Funktion&#10;&quot;changeMusicFile&quot; to change the music file related to A Song in the Song List.&#10;UserData is written in Binary into userdata.bin.">
+      <option name="closed" value="true" />
+      <created>1702059139028</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1702059139028</updated>
+    </task>
+    <task id="LOCAL-00009" summary="removed&#10;Index">
+      <option name="closed" value="true" />
+      <created>1702147856688</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1702147856688</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Implemented&#10;logic to Play a song with a Valid Music File">
+      <option name="closed" value="true" />
+      <created>1702253533824</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1702253533824</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticEditVcpkgJson value="true" />
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticFoundErrors value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="unstable version&#10;SongList and Music Folder filepath via windows api" />
+    <MESSAGE value="unstable version&#10;added funktions:&#10;openCSVFileDialog&#10;openFolderDialog&#10;checkAndHandleUserDataFile&#10;checkAndHandleMusicFileFolder&#10;setUserData&#10;writeUserDataIntoUserDataFile&#10;readUserDataFromUserDataFile&#10;and deletet all FILE* file parameter and replaced it with file opening and closing with the needed modes in the display funktion themselfe." />
+    <MESSAGE value="added&#10;logic for userdata.bin file" />
+    <MESSAGE value="Implemented file handling logic for reading user data and music-related tasks. Modified menu navigation and song list reading logic. Incorporated dynamic memory allocation and improved user interface. Reviewed and refined various functions. Updated function comments and added external variable declarations. Overall enhancements and optimizations to the project." />
+    <MESSAGE value="Implemented Funktion&#10;&quot;removeMusicFile&quot; to remove a music file from A Song in the Song List" />
+    <MESSAGE value="Implemented Funktion&#10;&quot;changeMusicFile&quot; to change the music file related to A Song in the Song List.&#10;UserData is written in Binary into userdata.bin." />
+    <MESSAGE value="removed&#10;Index" />
+    <MESSAGE value="Implemented&#10;logic to Play a song with a Valid Music File" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented&#10;logic to Play a song with a Valid Music File" />
+  </component>
+</project>

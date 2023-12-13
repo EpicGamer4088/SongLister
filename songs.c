@@ -100,7 +100,6 @@ void checkIfAllMusicFileEntriesAreValid()
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
-    String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL)
@@ -108,7 +107,6 @@ void checkIfAllMusicFileEntriesAreValid()
         perror("Memory allocation error");
         free(songName);
         free(songFileName);
-        free(musicFilePath);
         exit(1);
     }
 
@@ -126,7 +124,6 @@ void checkIfAllMusicFileEntriesAreValid()
             perror("Memory allocation error");
             free(songName);
             free(songFileName);
-            free(musicFilePath);
 
             // Release of allocated memory
             for (int j = 0; j < indexCount; j++)
@@ -162,12 +159,7 @@ void checkIfAllMusicFileEntriesAreValid()
 
     for (int j = 0; j < i; j++)
     {
-        songFileName = mergeStr(mergeStr(songs[j].artist, "__"), songs[j].name);
-
-        convertSpacesAndSpecialCharsToUnderscores(songFileName);
-        convertToLowerCase(songFileName);
-
-        songFileName = mergeStr(songFileName, ".wav");
+        songFileName = generateMusicFileName(songs[j]);
 
         if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)) &&
             strCmpIgnoreCase(songs[j].musicFileName, "none"))
@@ -206,7 +198,7 @@ void checkIfAllMusicFileEntriesAreValid()
             }
             for (int k = 0; k < i; k++)
             {
-                if (k == j)
+                if (!strCmpIgnoreCase(songs[j].musicFileName, "none"))
                 {
                     fprintf(file, "%s;%s;%s;%s;%hd;%hd;%s\n",
                             songs[k].name, songs[k].album, songs[k].artist,
@@ -232,8 +224,6 @@ void checkIfAllMusicFileEntriesAreValid()
 
     free(songs);
     free(songName);
-    free(songFileName);
-    free(musicFilePath);
 }
 
 void printTitleScreen()
@@ -635,7 +625,6 @@ TSongInfos inputSongInfos()
 {
     TSongInfos songInfos = allocateSongInfos();
 
-
     printf("Input the needes Informations from the Song\n");
 
     printf("Name:");
@@ -854,8 +843,10 @@ void removeSong()
 
     fclose(file);
 
-    removeMusicFileFromMusicFolder(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName));
-
+    if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName)))
+    {
+        removeMusicFileFromMusicFolder(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songs[songIndex].musicFileName));
+    }
     // Release of allocated memory
     for (int j = 0; j < indexCount; j++)
     {
@@ -1198,7 +1189,6 @@ void addMusicFile()
     free(songs);
     free(songName);
     free(songFileName);
-    free(musicFilePath);
 
     system("pause");
 }
@@ -1220,8 +1210,6 @@ String addMusicFileForNewSong(const TSongInfos songInfos)
 
     copyAndRenameMusicFile(musicFilePath, fullMusicFolderFilePath, songFileName);
 
-    free(musicFilePath);
-
     usleep(100000);
     system("cls");
 
@@ -1237,7 +1225,6 @@ void removeMusicFile()
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
-    String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL)
@@ -1245,7 +1232,6 @@ void removeMusicFile()
         perror("Memory allocation error");
         free(songName);
         free(songFileName);
-        free(musicFilePath);
         exit(1);
     }
 
@@ -1271,7 +1257,6 @@ void removeMusicFile()
             free(songs);
             free(songName);
             free(songFileName);
-            free(musicFilePath);
 
             exit(1);
         }
@@ -1329,7 +1314,6 @@ void removeMusicFile()
         free(songs);
         free(songName);
         free(songFileName);
-        free(musicFilePath);
 
         system("pause");
         displayMusicMenu();
@@ -1352,7 +1336,6 @@ void removeMusicFile()
         free(songs);
         free(songName);
         free(songFileName);
-        free(musicFilePath);
 
         system("pause");
         displayMusicMenu();
@@ -1399,7 +1382,6 @@ void removeMusicFile()
     free(songs);
     free(songName);
     free(songFileName);
-    free(musicFilePath);
 
     system("pause");
 }
@@ -1507,12 +1489,7 @@ void changeMusicFile()
         displayMusicMenu();
     }
 
-    songFileName = mergeStr(mergeStr(songs[songIndex].artist, "__"), songName);
-
-    convertSpacesAndSpecialCharsToUnderscores(songFileName);
-    convertToLowerCase(songFileName);
-
-    songFileName = mergeStr(songFileName, ".wav");
+    songFileName = generateMusicFileName(songs[songIndex]);
 
     if (!fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)))
     {
@@ -1589,7 +1566,6 @@ void changeMusicFile()
     free(songs);
     free(songName);
     free(songFileName);
-    free(musicFilePath);
 
     system("pause");
 }

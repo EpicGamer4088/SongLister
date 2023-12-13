@@ -10,8 +10,5 @@ add_executable(
         songs.h
         )
 
-
-
-
 target_link_libraries(SongLister shlwapi)
 target_link_libraries(SongLister winmm)
