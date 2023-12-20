@@ -1,4 +1,4 @@
-# Install script for directory: H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister
+# Install script for directory: C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,7 +34,7 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "H:/Programmieren/JetBrains/CLion/bin/mingw/bin/objdump.exe")
+  set(CMAKE_OBJDUMP "C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/objdump.exe")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "H:/CloudStorage/OneDrive/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

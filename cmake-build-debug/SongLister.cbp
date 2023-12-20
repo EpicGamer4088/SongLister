@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="SongLister"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="SongLister">
+				<Option output="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/SongLister.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/include"/>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/../../../../include"/>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed"/>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/../../../../x86_64-w64-mingw32/include"/>
+					<Add directory="/mingw/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 SongLister"/>
+					<CompileFile command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="SongLister/fast">
+				<Option output="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/SongLister.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/include"/>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/../../../../include"/>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed"/>
+					<Add directory="C:/Programmieren/JetBrains/apps/CLion 2023.2.2/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/13.1.0/../../../../x86_64-w64-mingw32/include"/>
+					<Add directory="/mingw/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 SongLister/fast"/>
+					<CompileFile command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PR483C~1/JETBRA~1/apps/CLION2~1.2/bin/mingw/bin/mingw32-make.exe -f &quot;C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/main.c">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/displayOptions.c">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/displayOptions.h">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/menues.c">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/menues.h">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/music.c">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/music.h">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/utils.c">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/utils.h">
+			<Option target="SongLister"/>
+		</Unit>
+		<Unit filename="C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

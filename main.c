@@ -1,7 +1,6 @@
-#include "songs.h"
+#include "utils/utils.h"
 
-int main()
-{
+int main() {
     Main();
     return 0;
 }
