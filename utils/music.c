@@ -110,6 +110,12 @@ void removeSong() {
     FILE *file = NULL;
     int songIndex;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL) {
@@ -234,6 +240,12 @@ void changeSongInformations() {
 
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL) {
@@ -359,8 +371,29 @@ void changeSongInformations() {
 void addMusicFile() {
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songFileName == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
+
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (musicFilePath == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        exit(1);
+    }
+
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL) {
@@ -522,8 +555,8 @@ void addMusicFile() {
 }
 
 String addMusicFileForNewSong(const TSongInfos songInfos) {
-    String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
-    String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    String songFileName;
+    String musicFilePath;
 
     usleep(500000);
 
@@ -550,7 +583,20 @@ String addMusicFileForNewSong(const TSongInfos songInfos) {
 void removeMusicFile() {
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songFileName == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
+
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL) {
@@ -697,8 +743,29 @@ void removeMusicFile() {
 void changeMusicFile() {
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songFileName == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
+
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (musicFilePath == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        exit(1);
+    }
+
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL) {
@@ -865,8 +932,29 @@ void playMusic() {
     Boolean isPlaying = FALSE;
     Boolean endPlayback = FALSE;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songFileName == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
+
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (musicFilePath == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        exit(1);
+    }
+
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL) {
@@ -995,6 +1083,8 @@ void playMusic() {
                             &isPlaying);
                 }
                 endPlayback = TRUE;
+                break;
+            default:
                 break;
         }
     }

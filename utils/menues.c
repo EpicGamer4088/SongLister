@@ -115,10 +115,12 @@ void updateUserDataMenu() {
     switch (selectedOption) {
         case 1:
             updateSongListFilePathInUserDataFile();
+            checkIfAllMusicFileEntriesAreValid();
             updateUserDataMenu();
             break;
         case 2:
             updateMusicFolderPathInUserDataFile();
+            checkIfAllMusicFileEntriesAreValid();
             updateUserDataMenu();
             break;
         case 3:

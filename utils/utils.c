@@ -22,13 +22,31 @@ void Main() {
     signal(SIGINT, exitHandler); // SIGINT is triggered, for example, by Ctrl+C
     signal(SIGTERM, exitHandler); // SIGTERM is triggered, for example, when exiting by the X in the top right
 
-    fullSongListFilePath = (String) malloc(MAX_PATH * sizeof(char));
-    fullMusicFolderFilePath = (String) malloc(MAX_PATH * sizeof(char));
     fullUserDataFilePath = (String) malloc(MAX_PATH * sizeof(char));
+    if (fullUserDataFilePath == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
+    fullSongListFilePath = (String) malloc(MAX_PATH * sizeof(char));
+    if (fullSongListFilePath == NULL)
+    {
+        perror("Memory allocation error");
+        free (fullUserDataFilePath);
+        exit(1);
+    }
+
+    fullMusicFolderFilePath = (String) malloc(MAX_PATH * sizeof(char));
+    if (fullMusicFolderFilePath == NULL)
+    {
+        perror("Memory allocation error");
+        free (fullUserDataFilePath);
+        free(fullSongListFilePath);
+        exit(1);
+    }
 
     checkAndHandleUserDataFile();
-    checkAndHandleSongListFile();
-    checkAndHandleMusicFolder();
 
     setIndexCount();
 
@@ -39,6 +57,10 @@ void Main() {
 
 void setIndexCount() {
     FILE *file = fopen(fullSongListFilePath, "rt");
+    if (file == NULL) {
+        perror("Error when opening the file");
+        exit(1);
+    }
 
     indexCount = 0;
 
@@ -71,9 +93,10 @@ void setIndexCount() {
 String getExecutablePath() {
     // Reserve dynamic memory for the buffer
     String buffer = (String) malloc(MAX_PATH * sizeof(char));
-    if (buffer == NULL) {
-        // Memory allocation error
-        return NULL;
+    if (buffer == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
     }
 
     GetModuleFileName(NULL, buffer, MAX_PATH);
@@ -172,9 +195,21 @@ String openFolderDialog() {
 void checkIfAllMusicFileEntriesAreValid() {
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
-    String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
-    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
 
+    String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songFileName == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
+
+    TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
     if (songs == NULL) {
         perror("Memory allocation error");
         free(songName);
@@ -301,32 +336,41 @@ void checkAndHandleUserDataFile() {
     } else {
         // File exists, read UserData from the file
         readUserDataFromUserDataFile();
+        checkAndHandleSongListFileAndMusicFolder();
         fclose(file);
     }
 }
 
-void checkAndHandleSongListFile() {
+void checkAndHandleSongListFileAndMusicFolder() {
     FILE *file = fopen(fullSongListFilePath, "rt");
 
-    if (file == NULL) {
-        openCSVFileDialog();
-    } else {
+    if (file == NULL || !(PathFileExistsA(fullMusicFolderFilePath))) {
+        if (file == NULL)
+        {
+            fullSongListFilePath = openCSVFileDialog();
+        }
+        if (!(PathFileExistsA(fullMusicFolderFilePath)))
+        {
+            fullMusicFolderFilePath = openFolderDialog();
+        }
+        writeUserDataIntoUserDataFile();
+    }
+    if (file != NULL)
+    {
         fclose(file);
     }
 
     free(fullUserDataFilePath);
 }
 
-void checkAndHandleMusicFolder() {
-    // Check if the folder already exists
-    if (!(PathFileExistsA(fullMusicFolderFilePath))) {
-        // Folder doesn't exist, open folder dialog
-        openFolderDialog();
-    }
-}
-
 void copyAndRenameMusicFile(const String srcPath, const String destFolder, const String newFileName) {
     String destPath = (String) malloc(MAX_PATH * sizeof(char));
+    if (destPath == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     snprintf(destPath, MAX_PATH, "%s\\%s", destFolder, newFileName);
 
     if (CopyFile(srcPath, destPath, FALSE) == 0) {
@@ -397,7 +441,7 @@ void updateSongListFilePathInUserDataFile() {
     fullSongListFilePath = openCSVFileDialog();
     writeUserDataIntoUserDataFile();
     system("cls");
-    printf("Succesfully Updated SongList File Path\n\n");
+    printf("Successfully Updated SongList File Path\n\n");
     system("pause");
 }
 
@@ -405,7 +449,7 @@ void updateMusicFolderPathInUserDataFile() {
     fullMusicFolderFilePath = openFolderDialog();
     writeUserDataIntoUserDataFile();
     system("cls");
-    printf("Succesfully Updated Music Folder Path\n\n");
+    printf("Successfully Updated Music Folder Path\n\n");
     system("pause");
 }
 
@@ -426,16 +470,19 @@ void pauseResumePlayback(const String fullMusicFilePath, Boolean *isPlaying) {
 
 String generateMusicFileName(const TSongInfos songInfos) {
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
-
-    if (songFileName != NULL) {
-        songFileName = mergeStr(songInfos.artist, "__");
-        songFileName = mergeStr(songFileName, songInfos.name);
-
-        convertSpacesAndSpecialCharsToUnderscores(songFileName);
-        convertToLowerCase(songFileName);
-
-        songFileName = mergeStr(songFileName, ".wav");
+    if (songFileName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
     }
+
+    songFileName = mergeStr(songInfos.artist, "__");
+    songFileName = mergeStr(songFileName, songInfos.name);
+
+    convertSpacesAndSpecialCharsToUnderscores(songFileName);
+    convertToLowerCase(songFileName);
+
+    songFileName = mergeStr(songFileName, ".wav");
 
     return songFileName;
 }
@@ -544,8 +591,9 @@ String mergeStr(const char *str1, const char *str2) {
     }
 
     const String mergedStr = (String) malloc(len1 + len2 + 1);
-
-    if (mergedStr == NULL) {
+    if (mergedStr == NULL)
+    {
+        perror("Memory allocation error");
         exit(1);
     }
 
@@ -585,7 +633,10 @@ TSongInfos allocateSongInfos() {
     };
 
     if (songInfos.name == NULL || songInfos.album == NULL | songInfos.artist == NULL ||
-        songInfos.genre == NULL || songInfos.musicFileName == NULL) {
+        songInfos.genre == NULL || songInfos.musicFileName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
     }
 
     return songInfos;

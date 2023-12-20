@@ -98,8 +98,29 @@ void displayListedSongsWithValidMusicFile() {
 
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songName == NULL)
+    {
+        perror("Memory allocation error");
+        exit(1);
+    }
+
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (songFileName == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        exit(1);
+    }
+
     String musicFilePath = (String) malloc(MAX_STR_LEN * sizeof(char));
+    if (musicFilePath == NULL)
+    {
+        perror("Memory allocation error");
+        free(songName);
+        free(songFileName);
+        exit(1);
+    }
+
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
 
     if (songs == NULL) {
@@ -647,8 +668,7 @@ void displayListedSongsByGenre() {
     system("cls");
 
     FILE *file = NULL;
-    char *searchGenre = malloc(MAX_STR_LEN * sizeof(char));
-
+    String searchGenre = malloc(MAX_STR_LEN * sizeof(char));
     if (searchGenre == NULL) {
         perror("Memory allocation error");
         exit(1);
@@ -659,7 +679,6 @@ void displayListedSongsByGenre() {
     if (songs == NULL) {
         perror("Memory allocation error");
         free(searchGenre);
-
         exit(1);
     }
 

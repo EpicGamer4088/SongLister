@@ -201,7 +201,7 @@ Boolean fileExists(const String fullFilePath);
  *
  * @return A String containing the selected CSV file path, or NULL if the operation is canceled or encounters an error.
  *
- * @note Assumes the availability of the Windows API and the GetOpenFileName function.
+ * @note Requires the availability of the Windows API and the GetOpenFileName function.
  *
  * @see OPENFILENAME, GetOpenFileName
  */
@@ -264,35 +264,26 @@ void checkIfAllMusicFileEntriesAreValid();
  * This function checks if the user data file exists. If the file does not exist, it creates the file and
  * writes default user data into it. If the file already exists, it reads user data from the file.
  *
- * @note Assumes the availability of the file-related functions (fopen, fclose) and the user data handling functions.
+ * @note Requires the availability of the file-related functions (fopen, fclose) and the user data handling functions.
  *
  * @see getExecutablePath, mergeStr, fopen, setUserData, writeUserDataIntoUserDataFile, readUserDataFromUserDataFile
  */
 void checkAndHandleUserDataFile();
 
 /**
- * @brief Checks and handles the existence of the song list file.
+ * @brief Checks the existence of a song list file and a music folder, prompts user if missing, and writes user data into a file.
  *
- * This function checks if the song list file exists. If the file does not exist, it opens a file dialog
- * to prompt the user to select a CSV file. If the file already exists, it closes the file handle.
+ * This function checks if a song list file and a music folder exist. If either is missing, it prompts the user to
+ * provide the necessary file or folder. If the song list file is missing, a file dialog is opened to select a CSV file.
+ * If the music folder is missing, a folder dialog is opened to select a folder. After obtaining the necessary paths,
+ * user data is written into a user data file using the writeUserDataIntoUserDataFile() function.
  *
- * @note Requires the availability of the file-related functions (fopen, fclose) and the file dialog function (openCSVFileDialog).
+ * @note The function relies on external functions openCSVFileDialog(), openFolderDialog(), and writeUserDataIntoUserDataFile().
+ * @note Requires the availability of the PathFileExistsA function for checking folder existence.
  *
- * @see fopen, fclose, openCSVFileDialog
+ * @see openCSVFileDialog, openFolderDialog, writeUserDataIntoUserDataFile, PathFileExistsA
  */
-void checkAndHandleSongListFile();
-
-/**
- * @brief Checks and handles the existence of the music file folder.
- *
- * This function checks if the music file folder exists. If the folder does not exist, it opens a folder dialog
- * to prompt the user to select a folder. If the folder already exists, it does nothing.
- *
- * @note Requires the availability of the Windows API functions (PathFileExistsA, CreateDirectoryA) and the folder dialog function (openFolderDialog).
- *
- * @see PathFileExistsA, CreateDirectoryA, openFolderDialog
- */
-void checkAndHandleMusicFolder();
+void checkAndHandleSongListFileAndMusicFolder();
 
 /**
  * @brief Copies and renames a music file from the source path to the destination folder with a new file name.
