@@ -333,7 +333,7 @@ void copyAndRenameMusicFile(const String srcPath, const String destFolder, const
         printf("\n\nError copying file. Error code: %lu\n", GetLastError());
     }
 
-    free(destPath);  // Don't forget to free the allocated memory
+    free(destPath);
 }
 
 void removeMusicFileFromMusicFolder(const String filePath) {
