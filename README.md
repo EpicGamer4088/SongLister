@@ -1,2 +1,2 @@
 # SongLister
- Song Lister Project for SEW till 20.12.2023
+ A C - Based Song Lister Programm featuring the abillity to play your listed songs as '.wave' files if you've added them to to Song
