@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/cmake-build-debug",
-		"source" : "C:/Users/timpl/OneDrive - HTBLA Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister"
+		"build" : "H:/Programmieren/.Git/SongLister - C/cmake-build-debug",
+		"source" : "H:/Programmieren/.Git/SongLister - C"
 	},
 	"version" : 
 	{

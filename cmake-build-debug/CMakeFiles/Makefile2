@@ -44,19 +44,19 @@ cmake_force:
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "C:\Programmieren\JetBrains\apps\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe"
+CMAKE_COMMAND = H:\Programmieren\JetBrains\CLion\bin\cmake\win\x64\bin\cmake.exe
 
 # The command to remove a file.
-RM = "C:\Programmieren\JetBrains\apps\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe" -E rm -f
+RM = H:\Programmieren\JetBrains\CLion\bin\cmake\win\x64\bin\cmake.exe -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister"
+CMAKE_SOURCE_DIR = "H:\Programmieren\.Git\SongLister - C"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug"
+CMAKE_BINARY_DIR = "H:\Programmieren\.Git\SongLister - C\cmake-build-debug"
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -80,14 +80,14 @@ clean: CMakeFiles/SongLister.dir/clean
 CMakeFiles/SongLister.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\SongLister.dir\build.make CMakeFiles/SongLister.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\SongLister.dir\build.make CMakeFiles/SongLister.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" --progress-num=1,2,3,4,5,6 "Built target SongLister"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" --progress-num=1,2,3,4,5,6 "Built target SongLister"
 .PHONY : CMakeFiles/SongLister.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/SongLister.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" 6
+	$(CMAKE_COMMAND) -E cmake_progress_start "H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/SongLister.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" 0
 .PHONY : CMakeFiles/SongLister.dir/rule
 
 # Convenience name for target.

@@ -43,19 +43,19 @@ cmake_force:
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "C:\Programmieren\JetBrains\apps\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe"
+CMAKE_COMMAND = H:\Programmieren\JetBrains\CLion\bin\cmake\win\x64\bin\cmake.exe
 
 # The command to remove a file.
-RM = "C:\Programmieren\JetBrains\apps\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe" -E rm -f
+RM = H:\Programmieren\JetBrains\CLion\bin\cmake\win\x64\bin\cmake.exe -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister"
+CMAKE_SOURCE_DIR = "H:\Programmieren\.Git\SongLister - C"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug"
+CMAKE_BINARY_DIR = "H:\Programmieren\.Git\SongLister - C\cmake-build-debug"
 
 # Include any dependencies generated for this target.
 include CMakeFiles/SongLister.dir/depend.make
@@ -69,74 +69,74 @@ include CMakeFiles/SongLister.dir/progress.make
 include CMakeFiles/SongLister.dir/flags.make
 
 CMakeFiles/SongLister.dir/main.c.obj: CMakeFiles/SongLister.dir/flags.make
-CMakeFiles/SongLister.dir/main.c.obj: C:/Users/timpl/OneDrive\ -\ HTBLA\ Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/main.c
+CMakeFiles/SongLister.dir/main.c.obj: H:/Programmieren/.Git/SongLister\ -\ C/main.c
 CMakeFiles/SongLister.dir/main.c.obj: CMakeFiles/SongLister.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/SongLister.dir/main.c.obj"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/main.c.obj -MF CMakeFiles\SongLister.dir\main.c.obj.d -o CMakeFiles\SongLister.dir\main.c.obj -c "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\main.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/SongLister.dir/main.c.obj"
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/main.c.obj -MF CMakeFiles\SongLister.dir\main.c.obj.d -o CMakeFiles\SongLister.dir\main.c.obj -c "H:\Programmieren\.Git\SongLister - C\main.c"
 
 CMakeFiles/SongLister.dir/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/SongLister.dir/main.c.i"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\main.c" > CMakeFiles\SongLister.dir\main.c.i
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "H:\Programmieren\.Git\SongLister - C\main.c" > CMakeFiles\SongLister.dir\main.c.i
 
 CMakeFiles/SongLister.dir/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/SongLister.dir/main.c.s"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\main.c" -o CMakeFiles\SongLister.dir\main.c.s
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "H:\Programmieren\.Git\SongLister - C\main.c" -o CMakeFiles\SongLister.dir\main.c.s
 
 CMakeFiles/SongLister.dir/utils/utils.c.obj: CMakeFiles/SongLister.dir/flags.make
-CMakeFiles/SongLister.dir/utils/utils.c.obj: C:/Users/timpl/OneDrive\ -\ HTBLA\ Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/utils.c
+CMakeFiles/SongLister.dir/utils/utils.c.obj: H:/Programmieren/.Git/SongLister\ -\ C/utils/utils.c
 CMakeFiles/SongLister.dir/utils/utils.c.obj: CMakeFiles/SongLister.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/SongLister.dir/utils/utils.c.obj"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/utils.c.obj -MF CMakeFiles\SongLister.dir\utils\utils.c.obj.d -o CMakeFiles\SongLister.dir\utils\utils.c.obj -c "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\utils.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/SongLister.dir/utils/utils.c.obj"
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/utils.c.obj -MF CMakeFiles\SongLister.dir\utils\utils.c.obj.d -o CMakeFiles\SongLister.dir\utils\utils.c.obj -c "H:\Programmieren\.Git\SongLister - C\utils\utils.c"
 
 CMakeFiles/SongLister.dir/utils/utils.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/SongLister.dir/utils/utils.c.i"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\utils.c" > CMakeFiles\SongLister.dir\utils\utils.c.i
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "H:\Programmieren\.Git\SongLister - C\utils\utils.c" > CMakeFiles\SongLister.dir\utils\utils.c.i
 
 CMakeFiles/SongLister.dir/utils/utils.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/SongLister.dir/utils/utils.c.s"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\utils.c" -o CMakeFiles\SongLister.dir\utils\utils.c.s
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "H:\Programmieren\.Git\SongLister - C\utils\utils.c" -o CMakeFiles\SongLister.dir\utils\utils.c.s
 
 CMakeFiles/SongLister.dir/utils/music.c.obj: CMakeFiles/SongLister.dir/flags.make
-CMakeFiles/SongLister.dir/utils/music.c.obj: C:/Users/timpl/OneDrive\ -\ HTBLA\ Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/music.c
+CMakeFiles/SongLister.dir/utils/music.c.obj: H:/Programmieren/.Git/SongLister\ -\ C/utils/music.c
 CMakeFiles/SongLister.dir/utils/music.c.obj: CMakeFiles/SongLister.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/SongLister.dir/utils/music.c.obj"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/music.c.obj -MF CMakeFiles\SongLister.dir\utils\music.c.obj.d -o CMakeFiles\SongLister.dir\utils\music.c.obj -c "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\music.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/SongLister.dir/utils/music.c.obj"
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/music.c.obj -MF CMakeFiles\SongLister.dir\utils\music.c.obj.d -o CMakeFiles\SongLister.dir\utils\music.c.obj -c "H:\Programmieren\.Git\SongLister - C\utils\music.c"
 
 CMakeFiles/SongLister.dir/utils/music.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/SongLister.dir/utils/music.c.i"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\music.c" > CMakeFiles\SongLister.dir\utils\music.c.i
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "H:\Programmieren\.Git\SongLister - C\utils\music.c" > CMakeFiles\SongLister.dir\utils\music.c.i
 
 CMakeFiles/SongLister.dir/utils/music.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/SongLister.dir/utils/music.c.s"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\music.c" -o CMakeFiles\SongLister.dir\utils\music.c.s
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "H:\Programmieren\.Git\SongLister - C\utils\music.c" -o CMakeFiles\SongLister.dir\utils\music.c.s
 
 CMakeFiles/SongLister.dir/utils/menues.c.obj: CMakeFiles/SongLister.dir/flags.make
-CMakeFiles/SongLister.dir/utils/menues.c.obj: C:/Users/timpl/OneDrive\ -\ HTBLA\ Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/menues.c
+CMakeFiles/SongLister.dir/utils/menues.c.obj: H:/Programmieren/.Git/SongLister\ -\ C/utils/menues.c
 CMakeFiles/SongLister.dir/utils/menues.c.obj: CMakeFiles/SongLister.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/SongLister.dir/utils/menues.c.obj"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/menues.c.obj -MF CMakeFiles\SongLister.dir\utils\menues.c.obj.d -o CMakeFiles\SongLister.dir\utils\menues.c.obj -c "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\menues.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/SongLister.dir/utils/menues.c.obj"
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/menues.c.obj -MF CMakeFiles\SongLister.dir\utils\menues.c.obj.d -o CMakeFiles\SongLister.dir\utils\menues.c.obj -c "H:\Programmieren\.Git\SongLister - C\utils\menues.c"
 
 CMakeFiles/SongLister.dir/utils/menues.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/SongLister.dir/utils/menues.c.i"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\menues.c" > CMakeFiles\SongLister.dir\utils\menues.c.i
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "H:\Programmieren\.Git\SongLister - C\utils\menues.c" > CMakeFiles\SongLister.dir\utils\menues.c.i
 
 CMakeFiles/SongLister.dir/utils/menues.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/SongLister.dir/utils/menues.c.s"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\menues.c" -o CMakeFiles\SongLister.dir\utils\menues.c.s
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "H:\Programmieren\.Git\SongLister - C\utils\menues.c" -o CMakeFiles\SongLister.dir\utils\menues.c.s
 
 CMakeFiles/SongLister.dir/utils/displayOptions.c.obj: CMakeFiles/SongLister.dir/flags.make
-CMakeFiles/SongLister.dir/utils/displayOptions.c.obj: C:/Users/timpl/OneDrive\ -\ HTBLA\ Steyr/2AHITN/SEW/C/2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister/utils/displayOptions.c
+CMakeFiles/SongLister.dir/utils/displayOptions.c.obj: H:/Programmieren/.Git/SongLister\ -\ C/utils/displayOptions.c
 CMakeFiles/SongLister.dir/utils/displayOptions.c.obj: CMakeFiles/SongLister.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/SongLister.dir/utils/displayOptions.c.obj"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/displayOptions.c.obj -MF CMakeFiles\SongLister.dir\utils\displayOptions.c.obj.d -o CMakeFiles\SongLister.dir\utils\displayOptions.c.obj -c "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\displayOptions.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/SongLister.dir/utils/displayOptions.c.obj"
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SongLister.dir/utils/displayOptions.c.obj -MF CMakeFiles\SongLister.dir\utils\displayOptions.c.obj.d -o CMakeFiles\SongLister.dir\utils\displayOptions.c.obj -c "H:\Programmieren\.Git\SongLister - C\utils\displayOptions.c"
 
 CMakeFiles/SongLister.dir/utils/displayOptions.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/SongLister.dir/utils/displayOptions.c.i"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\displayOptions.c" > CMakeFiles\SongLister.dir\utils\displayOptions.c.i
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "H:\Programmieren\.Git\SongLister - C\utils\displayOptions.c" > CMakeFiles\SongLister.dir\utils\displayOptions.c.i
 
 CMakeFiles/SongLister.dir/utils/displayOptions.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/SongLister.dir/utils/displayOptions.c.s"
-	C:\PR483C~1\JETBRA~1\apps\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\utils\displayOptions.c" -o CMakeFiles\SongLister.dir\utils\displayOptions.c.s
+	H:\Programmieren\JetBrains\CLion\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "H:\Programmieren\.Git\SongLister - C\utils\displayOptions.c" -o CMakeFiles\SongLister.dir\utils\displayOptions.c.s
 
 # Object files for target SongLister
 SongLister_OBJECTS = \
@@ -158,7 +158,7 @@ SongLister.exe: CMakeFiles/SongLister.dir/build.make
 SongLister.exe: CMakeFiles/SongLister.dir/linkLibs.rsp
 SongLister.exe: CMakeFiles/SongLister.dir/objects1.rsp
 SongLister.exe: CMakeFiles/SongLister.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable SongLister.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable SongLister.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\SongLister.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -170,6 +170,6 @@ CMakeFiles/SongLister.dir/clean:
 .PHONY : CMakeFiles/SongLister.dir/clean
 
 CMakeFiles/SongLister.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister" "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister" "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug" "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug" "C:\Users\timpl\OneDrive - HTBLA Steyr\2AHITN\SEW\C\2023.11.20..2023.12.20_Projekt2AHITNGr1_SongLister\cmake-build-debug\CMakeFiles\SongLister.dir\DependInfo.cmake" --color=$(COLOR)
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" "H:\Programmieren\.Git\SongLister - C" "H:\Programmieren\.Git\SongLister - C" "H:\Programmieren\.Git\SongLister - C\cmake-build-debug" "H:\Programmieren\.Git\SongLister - C\cmake-build-debug" "H:\Programmieren\.Git\SongLister - C\cmake-build-debug\CMakeFiles\SongLister.dir\DependInfo.cmake" --color=$(COLOR)
 .PHONY : CMakeFiles/SongLister.dir/depend
 
