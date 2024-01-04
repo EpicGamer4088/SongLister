@@ -7,30 +7,37 @@
 #include <conio.h>
 #include <windows.h>
 
-void MainMenu() {
+void MainMenu()
+{
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printTitleScreen();
         printMenuOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 7 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 7) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             addNewSong();
             MainMenu();
@@ -59,7 +66,8 @@ void MainMenu() {
     }
 }
 
-void printTitleScreen() {
+void printTitleScreen()
+{
     printf("--------------------------------\n"
            "|                              |\n"
            "|          Song Rater          |\n"
@@ -67,7 +75,8 @@ void printTitleScreen() {
            "--------------------------------\n");
 }
 
-void printListOptionsTitleScreen() {
+void printListOptionsTitleScreen()
+{
     printf("-----------------------------------\n"
            "|                                 |\n"
            "|           Song Lister           |\n"
@@ -75,7 +84,8 @@ void printListOptionsTitleScreen() {
            "-----------------------------------\n");
 }
 
-void printPlayMusicScreen(TSongInfos songs) {
+void printPlayMusicScreen(TSongInfos songs)
+{
     printf("  ____________________________________________________\n");
     printf(" /                                                    \\\n");
     printf("|   Song:       %-30s         |\n", songs.name);
@@ -87,32 +97,39 @@ void printPlayMusicScreen(TSongInfos songs) {
     printf("Esc:   Stop Playback\n");
 }
 
-void updateUserDataMenu() {
+void updateUserDataMenu()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printTitleScreen();
         printChangeUserDataOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             updateSongListFilePathInUserDataFile();
             checkIfAllMusicFileEntriesAreValid();
@@ -131,7 +148,8 @@ void updateUserDataMenu() {
     }
 }
 
-void printMenuOptions(const int selectedOption) {
+void printMenuOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  Add a new Song to Song List\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  Delete a Song from song List\n", (selectedOption == 2) ? ">>" : "  ");
@@ -142,7 +160,8 @@ void printMenuOptions(const int selectedOption) {
     printf("%s  Exit\n\n", (selectedOption == 7) ? ">>" : "  ");
 }
 
-void printListOptions(const int selectedOption) {
+void printListOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  List all Songs\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List Sorted\n", (selectedOption == 2) ? ">>" : "  ");
@@ -150,7 +169,8 @@ void printListOptions(const int selectedOption) {
     printf("%s  Back To Main Menu\n", (selectedOption == 4) ? ">>" : "  ");
 }
 
-void printMusicOptions(const int selectedOption) {
+void printMusicOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  Add Music File for a Song\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  Remove Music File for a Song\n", (selectedOption == 2) ? ">>" : "  ");
@@ -160,14 +180,16 @@ void printMusicOptions(const int selectedOption) {
     printf("%s  Back To Main Menu\n", (selectedOption == 6) ? ">>" : "  ");
 }
 
-void printChangeUserDataOptions(const int selectedOption) {
+void printChangeUserDataOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  Change SongList File Path\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  Change Music Folder Path\n", (selectedOption == 2) ? ">>" : "  ");
     printf("%s  Back To Main Menu\n", (selectedOption == 3) ? ">>" : "  ");
 }
 
-void printSortedListOptions(const int selectedOption) {
+void printSortedListOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  List Sorted by Name\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List Sorted by Album\n", (selectedOption == 2) ? ">>" : "  ");
@@ -178,28 +200,32 @@ void printSortedListOptions(const int selectedOption) {
     printf("%s  One Step Back...\n", (selectedOption == 7) ? ">>" : "  ");
 }
 
-void printSortedListByNameOptions(const int selectedOption) {
+void printSortedListByNameOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  List Sorted by Name (A-Z)\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List Infos from a Given Song\n", (selectedOption == 2) ? ">>" : "  ");
     printf("%s  One Step Back...\n", (selectedOption == 3) ? ">>" : "  ");
 }
 
-void printSortedListByAlbumOptions(const int selectedOption) {
+void printSortedListByAlbumOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  List Sorted by Album (A-Z)\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List every Entries from a given Album\n", (selectedOption == 2) ? ">>" : "  ");
     printf("%s  One Step Back...\n", (selectedOption == 3) ? ">>" : "  ");
 }
 
-void printSortedListByArtistOptions(const int selectedOption) {
+void printSortedListByArtistOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  List Sorted by Artist (A-Z)\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List every Entries from a given Artist\n", (selectedOption == 2) ? ">>" : "  ");
     printf("%s  One Step Back...\n", (selectedOption == 3) ? ">>" : "  ");
 }
 
-void printSortedListByYearOfPublishingOptions(const int selectedOption) {
+void printSortedListByYearOfPublishingOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  List (Newest - Oldest)\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List (Oldest - Newest)\n", (selectedOption == 2) ? ">>" : "  ");
@@ -209,7 +235,8 @@ void printSortedListByYearOfPublishingOptions(const int selectedOption) {
     printf("%s  One Step Back...\n", (selectedOption == 6) ? ">>" : "  ");
 }
 
-void printSortedListByRatingOptions(const int selectedOption) {
+void printSortedListByRatingOptions(const int selectedOption)
+{
     printf("Chose a Option:\n");
     printf("%s  List (Best - Worse)\n", (selectedOption == 1) ? ">>" : "  ");
     printf("%s  List (Worse - Best)\n", (selectedOption == 2) ? ">>" : "  ");
@@ -217,32 +244,39 @@ void printSortedListByRatingOptions(const int selectedOption) {
     printf("%s  One Step Back...\n", (selectedOption == 4) ? ">>" : "  ");
 }
 
-void displayMusicMenu() {
+void displayMusicMenu()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printMusicOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 6 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 6) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             addMusicFile();
             displayMusicMenu();
@@ -270,32 +304,39 @@ void displayMusicMenu() {
     }
 }
 
-void displayListedSongs() {
+void displayListedSongs()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printListOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 4 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 4) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             displayListedSongsStatic();
             displayListedSongs();
@@ -315,32 +356,39 @@ void displayListedSongs() {
     }
 }
 
-void displayListedSongsSorted() {
+void displayListedSongsSorted()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printSortedListOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 7 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 7) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             displayListedSongsSortedByName();
             break;
@@ -368,32 +416,39 @@ void displayListedSongsSorted() {
     }
 }
 
-void displayListedSongsSortedByName() {
+void displayListedSongsSortedByName()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printSortedListByNameOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             displayListedSongsSortedByNameA2Z();
             displayListedSongsSortedByName();
@@ -410,32 +465,39 @@ void displayListedSongsSortedByName() {
     }
 }
 
-void displayListedSongsSortedByAlbum() {
+void displayListedSongsSortedByAlbum()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printSortedListByAlbumOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             displayListedSongsSortedByAlbumA2Z();
             displayListedSongsSortedByAlbum();
@@ -452,32 +514,39 @@ void displayListedSongsSortedByAlbum() {
     }
 }
 
-void displayListedSongsSortedByArtist() {
+void displayListedSongsSortedByArtist()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printSortedListByArtistOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 3 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 3) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             displayListedSongsSortedByArtistA2Z();
             displayListedSongsSortedByArtist();
@@ -494,32 +563,39 @@ void displayListedSongsSortedByArtist() {
     }
 }
 
-void displayListedSongsByYearOfPublishing() {
+void displayListedSongsByYearOfPublishing()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printSortedListByYearOfPublishingOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 6 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 6) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             displayListedSongsByYearOfPublishingNew2Old();
             displayListedSongsByYearOfPublishing();
@@ -548,32 +624,39 @@ void displayListedSongsByYearOfPublishing() {
     }
 }
 
-void displayListedSongsByRating() {
+void displayListedSongsByRating()
+{
     fflush(stdin);
 
     int option;
     int selectedOption = 1;
 
-    while (TRUE) {
+    while (TRUE)
+    {
         system("cls");
         printListOptionsTitleScreen();
         printSortedListByRatingOptions(selectedOption);
 
         option = getch();
-        if (option == 224) {
+        if (option == 224)
+        {
             // Arrow key detected
             option = getch();
-            if (option == 72) {
+            if (option == 72)
+            {
                 selectedOption = (selectedOption == 1) ? 4 : selectedOption - 1;
-            } else if (option == 80) {
+            } else if (option == 80)
+            {
                 selectedOption = (selectedOption == 4) ? 1 : selectedOption + 1;
             }
-        } else if (option == 13) {
+        } else if (option == 13)
+        {
             break;
         }
     }
 
-    switch (selectedOption) {
+    switch (selectedOption)
+    {
         case 1:
             displayListedSongsByRatingBest2Worse();
             displayListedSongsByRating();

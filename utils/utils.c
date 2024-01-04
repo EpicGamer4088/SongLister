@@ -18,7 +18,8 @@ String fullSongListFilePath = NULL;
 String fullMusicFolderFilePath = NULL;
 String fullUserDataFilePath = NULL;
 
-void Main() {
+void Main()
+{
     signal(SIGINT, exitHandler); // SIGINT is triggered, for example, by Ctrl+C
     signal(SIGTERM, exitHandler); // SIGTERM is triggered, for example, when exiting by the X in the top right
 
@@ -33,7 +34,7 @@ void Main() {
     if (fullSongListFilePath == NULL)
     {
         perror("Memory allocation error");
-        free (fullUserDataFilePath);
+        free(fullUserDataFilePath);
         exit(1);
     }
 
@@ -41,7 +42,7 @@ void Main() {
     if (fullMusicFolderFilePath == NULL)
     {
         perror("Memory allocation error");
-        free (fullUserDataFilePath);
+        free(fullUserDataFilePath);
         free(fullSongListFilePath);
         exit(1);
     }
@@ -55,34 +56,42 @@ void Main() {
     MainMenu();
 }
 
-void setIndexCount() {
+void setIndexCount()
+{
     FILE *file = fopen(fullSongListFilePath, "rt");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("Error when opening the file");
         exit(1);
     }
 
     indexCount = 0;
 
-    while (1) {
+    while (1)
+    {
         char line[MAX_STR_LEN];
-        if (fgets(line, sizeof(line), file) != NULL) {
+        if (fgets(line, sizeof(line), file) != NULL)
+        {
             // Check if line is valid (not empy or blankspaces)
             int validLine = 0;
-            for (int i = 0; i < strlen(line); i++) {
-                if (!isspace(line[i])) {
+            for (int i = 0; i < strlen(line); i++)
+            {
+                if (!isspace(line[i]))
+                {
                     validLine = 1;
                     break;
                 }
             }
 
-            if (validLine && sscanf(line, "%*hd;%*[^;];%*[^;];%*[^;];%*[^;];%*hd;%*hd") == 0) {
+            if (validLine && sscanf(line, "%*hd;%*[^;];%*[^;];%*[^;];%*[^;];%*hd;%*hd") == 0)
+            {
                 // Valid Line found, increment indexCount
                 indexCount++;
             }
         }
 
-        if (feof(file)) {
+        if (feof(file))
+        {
             break;
         }
     }
@@ -90,7 +99,8 @@ void setIndexCount() {
     fclose(file);
 }
 
-String getExecutablePath() {
+String getExecutablePath()
+{
     // Reserve dynamic memory for the buffer
     String buffer = (String) malloc(MAX_PATH * sizeof(char));
     if (buffer == NULL)
@@ -103,7 +113,8 @@ String getExecutablePath() {
 
     // Removing the filename to keep just the directory
     char *lastBackslash = strrchr(buffer, '\\');
-    if (lastBackslash != NULL) {
+    if (lastBackslash != NULL)
+    {
         *lastBackslash = '\0';
     }
 
@@ -111,17 +122,21 @@ String getExecutablePath() {
     return buffer;
 }
 
-Boolean fileExists(const String fullFilePath) {
+Boolean fileExists(const String fullFilePath)
+{
     FILE *file = fopen(fullFilePath, "rb");
-    if (file) {
+    if (file)
+    {
         fclose(file);
         return TRUE;  // Datei existiert
-    } else {
+    } else
+    {
         return FALSE;  // Datei existiert nicht
     }
 }
 
-String openCSVFileDialog() {
+String openCSVFileDialog()
+{
     static char filePath[MAX_PATH];
 
     OPENFILENAME ofn;
@@ -138,14 +153,17 @@ String openCSVFileDialog() {
     ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-    if (GetOpenFileName(&ofn) == TRUE) {
+    if (GetOpenFileName(&ofn) == TRUE)
+    {
         return filePath;
-    } else {
+    } else
+    {
         return NULL;
     }
 }
 
-String openMusicFileDialog() {
+String openMusicFileDialog()
+{
     static char filePath[MAX_PATH];
 
     OPENFILENAME ofn;
@@ -163,14 +181,17 @@ String openMusicFileDialog() {
     ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-    if (GetOpenFileName(&ofn) == TRUE) {
+    if (GetOpenFileName(&ofn) == TRUE)
+    {
         return filePath;
-    } else {
+    } else
+    {
         return NULL;
     }
 }
 
-String openFolderDialog() {
+String openFolderDialog()
+{
     static char folderPath[MAX_PATH];
 
     BROWSEINFO browseInfo = {0};
@@ -183,16 +204,19 @@ String openFolderDialog() {
 
     LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
 
-    if (pidl != NULL) {
+    if (pidl != NULL)
+    {
         SHGetPathFromIDList(pidl, folderPath);
         CoTaskMemFree(pidl);
         return folderPath;
-    } else {
+    } else
+    {
         return NULL;
     }
 }
 
-void checkIfAllMusicFileEntriesAreValid() {
+void checkIfAllMusicFileEntriesAreValid()
+{
     FILE *file = NULL;
     String songName = (String) malloc(MAX_STR_LEN * sizeof(char));
     if (songName == NULL)
@@ -210,7 +234,8 @@ void checkIfAllMusicFileEntriesAreValid() {
     }
 
     TSongInfos *songs = malloc(indexCount * sizeof(TSongInfos));
-    if (songs == NULL) {
+    if (songs == NULL)
+    {
         perror("Memory allocation error");
         free(songName);
         free(songFileName);
@@ -218,19 +243,23 @@ void checkIfAllMusicFileEntriesAreValid() {
     }
 
     // Dynamic allocation for each song element
-    for (int i = 0; i < indexCount; i++) {
-        for (int j = 0; j < indexCount; j++) {
+    for (int i = 0; i < indexCount; i++)
+    {
+        for (int j = 0; j < indexCount; j++)
+        {
             songs[j] = allocateSongInfos();
         }
 
         if (songs[i].name == NULL || songs[i].album == NULL ||
-            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL) {
+            songs[i].artist == NULL || songs[i].genre == NULL || songs[i].musicFileName == NULL)
+        {
             perror("Memory allocation error");
             free(songName);
             free(songFileName);
 
             // Release of allocated memory
-            for (int j = 0; j < indexCount; j++) {
+            for (int j = 0; j < indexCount; j++)
+            {
                 freeSongInfos(songs[j]);
             }
 
@@ -243,7 +272,8 @@ void checkIfAllMusicFileEntriesAreValid() {
 
     // Open File to Read
     file = fopen(fullSongListFilePath, "rt");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("Error when opening the file");
         exit(1);
     }
@@ -252,25 +282,31 @@ void checkIfAllMusicFileEntriesAreValid() {
     while (i < indexCount && fscanf(file, "%[^;];%[^;];%[^;];%[^;];%hd;%hd;%[^\n]\n",
                                     songs[i].name, songs[i].album,
                                     songs[i].artist, songs[i].genre, &songs[i].yearPublished,
-                                    &songs[i].rating, songs[i].musicFileName) == 7) {
+                                    &songs[i].rating, songs[i].musicFileName) == 7)
+    {
         i++;
     }
 
     fclose(file);
 
-    for (int j = 0; j < i; j++) {
+    for (int j = 0; j < i; j++)
+    {
         songFileName = generateMusicFileName(songs[j]);
 
         if (fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)) &&
-            strCmpIgnoreCase(songs[j].musicFileName, "none")) {
+            strCmpIgnoreCase(songs[j].musicFileName, "none"))
+        {
             // Open File to Write
             file = fopen(fullSongListFilePath, "wt");
-            if (file == NULL) {
+            if (file == NULL)
+            {
                 perror("Error when opening the file");
                 exit(1);
             }
-            for (int k = 0; k < i; k++) {
-                if (k == j) {
+            for (int k = 0; k < i; k++)
+            {
+                if (k == j)
+                {
                     songs[k].musicFileName = songFileName;
 
                 }
@@ -283,20 +319,25 @@ void checkIfAllMusicFileEntriesAreValid() {
             fclose(file);
 
         } else if (!fileExists(mergeStr(mergeStr(fullMusicFolderFilePath, "\\"), songFileName)) &&
-                   !strCmpIgnoreCase(songs[j].musicFileName, "none")) {
+                   !strCmpIgnoreCase(songs[j].musicFileName, "none"))
+        {
             // Open File to Write
             file = fopen(fullSongListFilePath, "wt");
-            if (file == NULL) {
+            if (file == NULL)
+            {
                 perror("Error when opening the file");
                 exit(1);
             }
-            for (int k = 0; k < i; k++) {
-                if (!strCmpIgnoreCase(songs[j].musicFileName, "none")) {
+            for (int k = 0; k < i; k++)
+            {
+                if (!strCmpIgnoreCase(songs[j].musicFileName, "none"))
+                {
                     fprintf(file, "%s;%s;%s;%s;%hd;%hd;%s\n",
                             songs[k].name, songs[k].album, songs[k].artist,
                             songs[k].genre, songs[k].yearPublished, songs[k].rating,
                             "none");
-                } else {
+                } else
+                {
                     fprintf(file, "%s;%s;%s;%s;%hd;%hd;%s\n",
                             songs[k].name, songs[k].album, songs[k].artist,
                             songs[k].genre, songs[k].yearPublished, songs[k].rating,
@@ -308,7 +349,8 @@ void checkIfAllMusicFileEntriesAreValid() {
     }
 
     // Release of allocated memory
-    for (int j = 0; j < indexCount; j++) {
+    for (int j = 0; j < indexCount; j++)
+    {
         freeSongInfos(songs[j]);
     }
 
@@ -316,24 +358,29 @@ void checkIfAllMusicFileEntriesAreValid() {
     free(songName);
 }
 
-void checkAndHandleUserDataFile() {
+void checkAndHandleUserDataFile()
+{
     fullUserDataFilePath = mergeStr(getExecutablePath(), USERDATA_FILE_NAME);
 
     FILE *file = fopen(fullUserDataFilePath, "rb");
 
-    if (file == NULL) {
+    if (file == NULL)
+    {
         // File does not exist, create the file
         file = fopen(fullUserDataFilePath, "wb");
 
-        if (file != NULL) {
+        if (file != NULL)
+        {
             // Write UserData to the file
             setUserData();
             writeUserDataIntoUserDataFile();
             fclose(file);
-        } else {
+        } else
+        {
             printf("Error creating file.\n");
         }
-    } else {
+    } else
+    {
         // File exists, read UserData from the file
         readUserDataFromUserDataFile();
         checkAndHandleSongListFileAndMusicFolder();
@@ -341,10 +388,12 @@ void checkAndHandleUserDataFile() {
     }
 }
 
-void checkAndHandleSongListFileAndMusicFolder() {
+void checkAndHandleSongListFileAndMusicFolder()
+{
     FILE *file = fopen(fullSongListFilePath, "rt");
 
-    if (file == NULL || !(PathFileExistsA(fullMusicFolderFilePath))) {
+    if (file == NULL || !(PathFileExistsA(fullMusicFolderFilePath)))
+    {
         if (file == NULL)
         {
             fullSongListFilePath = openCSVFileDialog();
@@ -363,7 +412,8 @@ void checkAndHandleSongListFileAndMusicFolder() {
     free(fullUserDataFilePath);
 }
 
-void copyAndRenameMusicFile(const String srcPath, const String destFolder, const String newFileName) {
+void copyAndRenameMusicFile(const String srcPath, const String destFolder, const String newFileName)
+{
     String destPath = (String) malloc(MAX_PATH * sizeof(char));
     if (destPath == NULL)
     {
@@ -373,27 +423,33 @@ void copyAndRenameMusicFile(const String srcPath, const String destFolder, const
 
     snprintf(destPath, MAX_PATH, "%s\\%s", destFolder, newFileName);
 
-    if (CopyFile(srcPath, destPath, FALSE) == 0) {
+    if (CopyFile(srcPath, destPath, FALSE) == 0)
+    {
         printf("\n\nError copying file. Error code: %lu\n", GetLastError());
     }
 
     free(destPath);
 }
 
-void removeMusicFileFromMusicFolder(const String filePath) {
-    if (remove(filePath) != 0) {
+void removeMusicFileFromMusicFolder(const String filePath)
+{
+    if (remove(filePath) != 0)
+    {
         printf("\n\nError deleting file. Error code: %lu\n", GetLastError());
     }
 }
 
-void setUserData() {
+void setUserData()
+{
     fullSongListFilePath = openCSVFileDialog();
     fullMusicFolderFilePath = openFolderDialog();
 }
 
-void writeUserDataIntoUserDataFile() {
+void writeUserDataIntoUserDataFile()
+{
     FILE *file = fopen(fullUserDataFilePath, "wb");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("Error opening file for writing in binary mode");
         exit(1);
     }
@@ -405,9 +461,11 @@ void writeUserDataIntoUserDataFile() {
     fclose(file);
 }
 
-void readUserDataFromUserDataFile() {
+void readUserDataFromUserDataFile()
+{
     FILE *file = fopen(fullUserDataFilePath, "rb");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("Error opening file for reading in binary mode");
         exit(1);
     }
@@ -422,7 +480,8 @@ void readUserDataFromUserDataFile() {
 
     // Look for the null terminator at the end of "fullSongListFilePath"
     size_t fullSongListFilePathLen = strnlen(fullSongListFilePath, fileSize);
-    if (fullSongListFilePathLen >= fileSize - 1) {
+    if (fullSongListFilePathLen >= fileSize - 1)
+    {
         // "fullSongListFilePath" is too long
         perror("Error reading fullSongListFilePath from userdata.bin file");
         fclose(file);
@@ -437,7 +496,8 @@ void readUserDataFromUserDataFile() {
 }
 
 
-void updateSongListFilePathInUserDataFile() {
+void updateSongListFilePathInUserDataFile()
+{
     fullSongListFilePath = openCSVFileDialog();
     writeUserDataIntoUserDataFile();
     system("cls");
@@ -445,7 +505,8 @@ void updateSongListFilePathInUserDataFile() {
     system("pause");
 }
 
-void updateMusicFolderPathInUserDataFile() {
+void updateMusicFolderPathInUserDataFile()
+{
     fullMusicFolderFilePath = openFolderDialog();
     writeUserDataIntoUserDataFile();
     system("cls");
@@ -453,22 +514,27 @@ void updateMusicFolderPathInUserDataFile() {
     system("pause");
 }
 
-void playWaveFile(const String fullMusicFilePath, Boolean *isPlaying) {
+void playWaveFile(const String fullMusicFilePath, Boolean *isPlaying)
+{
     *isPlaying = TRUE; // Setze den Wiedergabestatus
     PlaySound(fullMusicFilePath, NULL, SND_ASYNC | SND_FILENAME);
 }
 
-void pauseResumePlayback(const String fullMusicFilePath, Boolean *isPlaying) {
-    if (*isPlaying) {
+void pauseResumePlayback(const String fullMusicFilePath, Boolean *isPlaying)
+{
+    if (*isPlaying)
+    {
         *isPlaying = FALSE; // Setze den Wiedergabestatus
         PlaySound(NULL, NULL, SND_PURGE);
-    } else {
+    } else
+    {
         *isPlaying = TRUE; // Setze den Wiedergabestatus
         playWaveFile(fullMusicFilePath, isPlaying);
     }
 }
 
-String generateMusicFileName(const TSongInfos songInfos) {
+String generateMusicFileName(const TSongInfos songInfos)
+{
     String songFileName = (String) malloc(MAX_STR_LEN * sizeof(char));
     if (songFileName == NULL)
     {
@@ -488,42 +554,52 @@ String generateMusicFileName(const TSongInfos songInfos) {
 }
 
 
-void convertSpacesAndSpecialCharsToUnderscores(char *str) {
-    if (str == NULL) {
+void convertSpacesAndSpecialCharsToUnderscores(char *str)
+{
+    if (str == NULL)
+    {
         return;  // Handle NULL input
     }
 
-    while (*str) {
-        if (*str == ' ' || *str == '/' || *str == '\\' || *str == '|') {
+    while (*str)
+    {
+        if (*str == ' ' || *str == '/' || *str == '\\' || *str == '|')
+        {
             *str = '_';
         }
         str++;
     }
 }
 
-void convertToLowerCase(char *str) {
-    if (str == NULL) {
+void convertToLowerCase(char *str)
+{
+    if (str == NULL)
+    {
         return;
     }
 
     // Iterate through each character in the string
-    while (*str) {
+    while (*str)
+    {
         // Convert the character to lowercase without using tolower from the string library
-        if (*str >= 'A' && *str <= 'Z') {
+        if (*str >= 'A' && *str <= 'Z')
+        {
             *str += ('a' - 'A');  // Convert uppercase to lowercase
         }
         str++;
     }
 }
 
-int compareSongsByName(const void *a, const void *b) {
+int compareSongsByName(const void *a, const void *b)
+{
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
 
     return strcmp(songA->name, songB->name);
 }
 
-int compareSongsByAlbum(const void *a, const void *b) {
+int compareSongsByAlbum(const void *a, const void *b)
+{
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
 
@@ -531,14 +607,16 @@ int compareSongsByAlbum(const void *a, const void *b) {
     return strcmp(songA->album, songB->album);
 }
 
-int compareSongsByArtist(const void *a, const void *b) {
+int compareSongsByArtist(const void *a, const void *b)
+{
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
 
     return strcmp(songA->artist, songB->artist);
 }
 
-int compareSongsByYearOfPublishingNew2Old(const void *a, const void *b) {
+int compareSongsByYearOfPublishingNew2Old(const void *a, const void *b)
+{
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
 
@@ -546,7 +624,8 @@ int compareSongsByYearOfPublishingNew2Old(const void *a, const void *b) {
     return songB->yearPublished - songA->yearPublished;
 }
 
-int compareSongsByYearOfPublishingOld2New(const void *a, const void *b) {
+int compareSongsByYearOfPublishingOld2New(const void *a, const void *b)
+{
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
 
@@ -554,7 +633,8 @@ int compareSongsByYearOfPublishingOld2New(const void *a, const void *b) {
     return songA->yearPublished - songB->yearPublished;
 }
 
-int compareSongsWorse2Best(const void *a, const void *b) {
+int compareSongsWorse2Best(const void *a, const void *b)
+{
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
 
@@ -562,7 +642,8 @@ int compareSongsWorse2Best(const void *a, const void *b) {
     return songB->rating - songA->rating;
 }
 
-int compareSongsBest2Worse(const void *a, const void *b) {
+int compareSongsBest2Worse(const void *a, const void *b)
+{
     const TSongInfos *songA = (const TSongInfos *) a;
     const TSongInfos *songB = (const TSongInfos *) b;
 
@@ -570,23 +651,29 @@ int compareSongsBest2Worse(const void *a, const void *b) {
     return songA->rating - songB->rating;
 }
 
-void charReplace(const char old, const char new, char *haystack, const int maxLength) {
-    for (int i = 0; i < maxLength && haystack[i] != '\0'; i++) {
-        if (haystack[i] == old) {
+void charReplace(const char old, const char new, char *haystack, const int maxLength)
+{
+    for (int i = 0; i < maxLength && haystack[i] != '\0'; i++)
+    {
+        if (haystack[i] == old)
+        {
             haystack[i] = new;
         }
     }
 }
 
-String mergeStr(const char *str1, const char *str2) {
+String mergeStr(const char *str1, const char *str2)
+{
     int len1 = 0;
     int len2 = 0;
 
-    while (str1[len1] != '\0') {
+    while (str1[len1] != '\0')
+    {
         len1++;
     }
 
-    while (str2[len2] != '\0') {
+    while (str2[len2] != '\0')
+    {
         len2++;
     }
 
@@ -597,11 +684,13 @@ String mergeStr(const char *str1, const char *str2) {
         exit(1);
     }
 
-    for (int i = 0; i < len1; i++) {
+    for (int i = 0; i < len1; i++)
+    {
         mergedStr[i] = str1[i];
     }
 
-    for (int i = 0; i < len2; i++) {
+    for (int i = 0; i < len2; i++)
+    {
         mergedStr[len1 + i] = str2[i];
     }
 
@@ -610,8 +699,10 @@ String mergeStr(const char *str1, const char *str2) {
     return mergedStr;
 }
 
-Boolean strCmpIgnoreCase(const char *str1, const char *str2) {
-    while (*str1 && *str2) {
+Boolean strCmpIgnoreCase(const char *str1, const char *str2)
+{
+    while (*str1 && *str2)
+    {
         if (tolower((unsigned char) *str1) != tolower((unsigned char) *str2))
             return 0;
         str1++;
@@ -620,7 +711,8 @@ Boolean strCmpIgnoreCase(const char *str1, const char *str2) {
     return (*str1 == '\0' && *str2 == '\0');
 }
 
-TSongInfos allocateSongInfos() {
+TSongInfos allocateSongInfos()
+{
     const TSongInfos songInfos = {
             (String) malloc(MAX_STR_LEN * sizeof(char)),
             (String) malloc(MAX_STR_LEN * sizeof(char)),
@@ -642,7 +734,8 @@ TSongInfos allocateSongInfos() {
     return songInfos;
 }
 
-void freeSongInfos(const TSongInfos songInfos) {
+void freeSongInfos(const TSongInfos songInfos)
+{
     free(songInfos.name);
     free(songInfos.album);
     free(songInfos.artist);
@@ -650,7 +743,8 @@ void freeSongInfos(const TSongInfos songInfos) {
     free(songInfos.musicFileName);
 }
 
-void exitProgramm(const int returnValue) {
+void exitProgramm(const int returnValue)
+{
     system("cls");
     printf("The Program will Close. Goodbye!\n\n");
     usleep(1000000);
@@ -658,7 +752,8 @@ void exitProgramm(const int returnValue) {
     exit(returnValue);
 }
 
-void exitHandler() {
+void exitHandler()
+{
     free(fullSongListFilePath);
     free(fullMusicFolderFilePath);
     free(fullUserDataFilePath);
