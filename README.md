@@ -1,2 +1,11 @@
-# SongLister
- A C - Based Song Lister Programm featuring the abillity to play your listed songs as '.wave' files if you've added them to to Song
+SongLister-C is a sophisticated C project meticulously crafted to offer a seamless and intuitive solution for music playlist management. At its core, the project focuses on efficiently organizing and presenting song information within a user-friendly console environment.
+
+A standout feature of SongLister is its advanced sorting capabilities, allowing users to display lists of songs sorted by ratings. This feature empowers users to effortlessly identify and prioritize their favorite tracks, with the flexibility to arrange playlists in both ascending and descending orders based on personal preferences.
+
+The project excels in user interaction, providing an intuitive interface for displaying songs with specific ratings. Users can input their desired rating, prompting SongLister to dynamically generate a tabular format showcasing songs that meet the specified criteria. This user-centric approach enhances the overall experience, simplifying the process of curating playlists tailored to individual preferences.
+
+Adding to its utility, SongLister incorporates a robust function for generating music file names based on song information. The algorithm intelligently concatenates artist and song names, replaces spaces and special characters with underscores, converts the result to lowercase, and appends the .wav extension. This automated file naming process streamlines the organization of music files, offering a hassle-free solution for users managing extensive music libraries.
+
+Underpinning these advanced functionalities are meticulously designed utility functions that handle critical aspects such as memory allocation, error handling, and resource release. The project leverages a range of file-related functions for reading and processing song information, memory-related functions for dynamic allocation, and sorting functions for presenting playlists in an orderly fashion.
+
+SongLister transcends being merely a tool; it stands as a comprehensive solution for music enthusiasts seeking a well-organized and highly customizable platform for managing their music collections. Its thoughtful design and feature-rich capabilities position it as an invaluable asset for anyone dedicated to optimizing their music playlist management experience. This project is implemented in C, showcasing a blend of efficient algorithms and careful consideration of user experience principles. The culmination of these elements results in a powerful and versatile music management tool, making SongLister a standout project in the realm of music software. 
